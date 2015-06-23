@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+{% block data %}
+{%  for d in data %}
+      <div class="row">
+          <div class="col-md-2">
+              <div class="inside" style="text-align: right; vertical-align: middle;">
+                  <h4>{{ d.name }}</h4>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="inside alert ok">
+                  <h4>{{ d.ok }}</h4>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="inside alert {% if d.critical >= 2 %}critical{% elif d.critical > 0 and d.critical < 2 %}warning{% else %}ok{% endif %}">
+                  <h4>{{ d.critical }}</h4>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="inside alert {% if d.warning >= 1 %}warning{% else %}ok{% endif %}">
+                  <h4>{{ d.warning }}</h4>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="inside alert {% if d.down >= 1 %}down{% else %}ok{% endif %}">
+                  <h4>{{ d.down }}</h4>
+              </div>
+          </div>
+
+      </div>
+      {% endfor %}
+{% endblock %}

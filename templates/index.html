@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+      <title>Sensu-Grid</title>
+      <style>
+        body {
+            background-color: #333333;
+            color: silver;
+            width: 98%;
+        }
+
+        .warning {
+              background-color: #ffb237;
+              color: #333333;
+              text-align: center;
+          }
+        .critical {
+              background-color: #f65631;
+              color: #333333;
+              text-align: center;
+          }
+        .ok {
+              background-color: #488b3b;
+              color: #333333;
+              text-align: center;
+          }
+        .down {
+            background-color: #5c378b;
+            color: silver;
+            text-align: center;
+          }
+          .col-md-2 {
+              text-align: center;
+          }
+
+      </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+
+      <div class="row">
+          <div class="col-md-12" style="text-align: center"><h1>SENSU-GRID</h1></div>
+      </div>
+      <div class="row">
+          <script type="application/javascript">
+
+
+            function formatAMPM() {
+            var d = new Date(),
+                seconds = d.getSeconds().toString.length == 1? ''+ d.getSeconds() : d.getSeconds(),
+                minutes = d.getMinutes().toString().length == 1 ? '0'+d.getMinutes() : d.getMinutes(),
+                hours = d.getHours().toString().length == 1 ? '0'+d.getHours() : d.getHours(),
+                ampm = d.getHours() >= 12 ? 'pm' : 'am',
+                months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+                days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            return days[d.getDay()]+' '+months[d.getMonth()]+' '+d.getDate()+' '+d.getFullYear()+' '+hours+':'+minutes+':'+seconds;
+            }
+
+            setInterval(function(){
+                document.getElementById("datetime").innerHTML = formatAMPM();
+            }, 1000);
+
+          </script>
+          <div class="col-md-12" style="text-align: center" id="datetime"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-12">&nbsp;<!-- SPACER //--></div>
+      </div>
+      <div class="row">
+          <div class="col-md-2" style="text-align: right"> <h2>#</h2> </div>
+          <div class="col-md-2"> <h2>OK</h2> </div>
+          <div class="col-md-2"> <h2>CRITICAL</h2> </div>
+          <div class="col-md-2"> <h2>WARNING</h2> </div>
+          <div class="col-md-2"> <h2>DOWN</h2> </div>
+      </div>
+    {% block data %}{% endblock %}
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </body>
+</html>
