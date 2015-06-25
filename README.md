@@ -31,3 +31,19 @@ python sensu-grid.py -c /full/path/to/example.yaml
 | -h     | help                            |
 | -d     | debug                           |
 | -c     | full path to configuration file |
+
+## requirements
+
+Add via pip install or via your package management
+
+- requests
+- json
+- yaml
+- Flask
+- re
+- argparse
+
+## todo
+
+- add wsgi config
+- either make it able to daemonize -or- use supervisord
