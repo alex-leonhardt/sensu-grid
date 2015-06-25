@@ -73,7 +73,6 @@ baseurl=http://repos.sensuapp.org/yum/el/6/x86_64/
 gpgcheck=0
 enabled=1
 EOF
-  SHELL
   sudo yum -y install sensu
   sudo yum -y install uchiwa
 
@@ -86,4 +85,5 @@ EOF
   sudo service sensu-api start
   sudo service sensu-server start
   sudo service uchiwa start
+  SHELL
 end
