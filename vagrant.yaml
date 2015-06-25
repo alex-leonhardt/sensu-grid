@@ -1,0 +1,24 @@
+#Example of config for multiple DCs/Environments:
+#---
+#dcs:
+#  -
+#    name: vagrant
+#    url: localhost
+#    port: 4567
+#  -
+#    name: local
+#    url: local
+#    port: 4567
+#
+#app:
+#  refresh: 60
+
+---
+dcs:
+  -
+    name: vagrant
+    url: localhost
+    port: 4567
+
+app:
+  refresh: 60

@@ -4,6 +4,7 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="refresh" content="{{ appcfg.refresh }}">
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
@@ -43,6 +44,11 @@
             color: silver;
             text-align: center;
           }
+        .ack {
+            background-color: silver;
+            color: #333333;
+            text-align: center;
+          }
           .col-md-2 {
               text-align: center;
           }
@@ -79,13 +85,6 @@
       </div>
       <div class="row">
           <div class="col-md-12">&nbsp;<!-- SPACER //--></div>
-      </div>
-      <div class="row">
-          <div class="col-md-2" style="text-align: right"> <h2>#</h2> </div>
-          <div class="col-md-2"> <h2>OK</h2> </div>
-          <div class="col-md-2"> <h2>CRITICAL</h2> </div>
-          <div class="col-md-2"> <h2>WARNING</h2> </div>
-          <div class="col-md-2"> <h2>DOWN</h2> </div>
       </div>
     {% block data %}{% endblock %}
     </div>

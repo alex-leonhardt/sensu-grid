@@ -64,8 +64,26 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   sudo apt-get update
-  #   sudo apt-get install -y apache2
-  # SHELL
+  config.vm.provision "shell", inline: <<-SHELL
+    sudo yum -y install epel-release vim-enhanced nginx
+    sudo su - c cat >/etc/yum.repos.d/sensu.repo<<EOF
+[sensu]
+name=sensu-main
+baseurl=http://repos.sensuapp.org/yum/el/6/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+  SHELL
+  sudo yum -y install sensu
+  sudo yum -y install uchiwa
+
+  sudo chkconfig sensu-client on
+  sudo chkconfig sensu-server on
+  sudo chkconfig sensu-api on
+  sudo chkconfig uchiwa on
+
+  sudo service sensu-client start
+  sudo service sensu-api start
+  sudo service sensu-server start
+  sudo service uchiwa start
 end

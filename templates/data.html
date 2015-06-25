@@ -1,5 +1,13 @@
 {% extends "index.html" %}
 {% block data %}
+      <div class="row">
+          <div class="col-md-2" style="text-align: right"> <h2>#</h2> </div>
+          <div class="col-md-2"> <h2>OK</h2> </div>
+          <div class="col-md-2"> <h2>CRITICAL</h2> </div>
+          <div class="col-md-2"> <h2>WARNING</h2> </div>
+          <div class="col-md-2"> <h2>DOWN</h2> </div>
+          <div class="col-md-2"> <h2>ACK'd</h2> </div>
+      </div>
 {%  for d in data %}
       <div class="row">
           <div class="col-md-2">
@@ -25,6 +33,11 @@
           <div class="col-md-2">
               <div class="inside alert {% if d.down >= 1 %}down{% else %}ok{% endif %}">
                   <h4>{{ d.down }}</h4>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="inside alert ack">
+                  <h4>{{ d.ack }}</h4>
               </div>
           </div>
 
