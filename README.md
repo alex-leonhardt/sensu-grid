@@ -4,7 +4,7 @@ Flask application to connect to a list of sensu-api servers and displays a grid 
 
 ## screenshots
 
-![sensu-grid screenshot](https://github.com/alex-leonhardt/sensu-grid/screenshots/screenshot_sensu-grid.png)
+![sensu-grid screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/screenshot_sensu-grid.png)
 
 ## example configuration
 ```
