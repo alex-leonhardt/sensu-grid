@@ -86,8 +86,3 @@ Add via pip install or via your package management
 - PyYAML
 - Flask
 - argparse
-
-## todo
-
-- add wsgi config
-- either make it able to daemonize -or- use supervisord
