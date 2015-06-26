@@ -18,7 +18,7 @@
 ---
 dcs:
   -
-    name: vagrant
+    name: localhost
     url: localhost
     port: 4567
 

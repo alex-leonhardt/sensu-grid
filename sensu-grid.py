@@ -162,4 +162,5 @@ if __name__ == '__main__':
     dcs = config['dcs']
     appcfg = config['app']
 
-    app.run(debug=_debug)
+    app.run(host='0.0.0.0',
+            debug=_debug)
