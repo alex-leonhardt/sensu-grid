@@ -14,7 +14,13 @@ dcs:
     name: dev
     url: sensu-dev.domain.local
     port: 4567
-
+  -
+    name: stage
+    url: sensu-stage.domain.local
+    port: 4567
+    user: apiuser
+    password: apipassword
+    
 app:
   refresh: 60
 ```

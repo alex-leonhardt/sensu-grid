@@ -6,15 +6,17 @@ import json
 import yaml
 import argparse
 
-
 app = Flask(__name__)
-
 data = {}
 
+
 def check_connection(dc):
-    url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
+    url = 'http://{0}:{1}/info'.format(dc['url'], dc['port'])
     try:
-        r = requests.get(url)
+        if 'user' and 'password' in dc:
+            r = requests.get(url, auth=(dc['user'], dc['password']))
+        else:
+            r = requests.get(url)
         if r:
             return True
         else:
@@ -24,20 +26,28 @@ def check_connection(dc):
 
 
 def get_data(dc):
-    if check_connection(dc):
-        url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
+    url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
+
+    if 'user' and 'password' in dc:
+        r = requests.get(url, auth=(dc['user'], dc['password']))
+    else:
         r = requests.get(url)
-        data = r.json()
-        r.close()
+
+    data = r.json()
+    r.close()
     return data
 
 
 def get_stashes(dc):
-    if check_connection(dc):
-        url = 'http://{0}:{1}/stashes'.format(dc['url'], dc['port'])
+    url = 'http://{0}:{1}/stashes'.format(dc['url'], dc['port'])
+
+    if 'user' and 'password' in dc:
+        r = requests.get(url, auth=(dc['user'], dc['password']))
+    else:
         r = requests.get(url)
-        data = r.json()
-        r.close()
+
+    data = r.json()
+    r.close()
     return data
 
 
@@ -109,7 +119,10 @@ def healthcheck():
         retdata[dc['name']] = {}
         retdata[dc['name']]['url'] = dc['url']
         retdata[dc['name']]['port'] = dc['port']
-
+        if 'user' in dc:
+            retdata[dc['name']]['user'] = dc['user']
+        if 'password' in dc:
+            retdata[dc['name']]['password'] = '********'
         if check_connection(dc):
             retdata[dc['name']]['connected'] = 'True'
             retdata[dc['name']]['error'] = 'False'

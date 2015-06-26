@@ -8,7 +8,8 @@
           <div class="col-md-2"> <h2>DOWN</h2> </div>
           <div class="col-md-2"> <h2>ACK'd</h2> </div>
       </div>
-{%  for d in data %}
+{% if data | length > 0 %}
+{% for d in data %}
       <div class="row">
           <div class="col-md-2">
               <div class="inside" style="text-align: right; vertical-align: middle;">
@@ -43,4 +44,5 @@
 
       </div>
       {% endfor %}
+{% endif %}
 {% endblock %}

@@ -9,6 +9,8 @@
 #    name: local
 #    url: local
 #    port: 4567
+#    user: username
+#    password: password
 #
 #app:
 #  refresh: 60
