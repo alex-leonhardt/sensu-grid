@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "test-warn": {
+      "command": "echo -n WARN; exit 1;",
+      "subscribers": [
+        "test"
+      ],
+      "standalone": true,
+      "interval": 60
+    }
+}
+}

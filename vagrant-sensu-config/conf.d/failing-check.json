@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "test-fail": {
+      "command": "echo -n FAIL; exit 2;",
+      "subscribers": [
+        "test"
+      ],
+      "standalone": true,
+      "interval": 60
+    }
+}
+}

@@ -61,29 +61,41 @@ Vagrant.configure(2) do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 4567, host: 4567
+
   config.vm.provision "shell", inline: <<-SHELL
-    sudo yum -y install epel-release vim-enhanced nginx
-    sudo su - c cat >/etc/yum.repos.d/sensu.repo<<EOF
+    sudo yum -y install epel-release vim-enhanced
+    sudo su -c cat >/etc/yum.repos.d/sensu.repo<<EOF
 [sensu]
 name=sensu-main
 baseurl=http://repos.sensuapp.org/yum/el/6/x86_64/
 gpgcheck=0
 enabled=1
 EOF
-  sudo yum -y install sensu
-  sudo yum -y install uchiwa
+  sudo yum -y install sensu uchiwa rabbitmq-server redis
 
+  sudo chkconfig rabbitmq-server on
+  sudo chkconfig redis on
   sudo chkconfig sensu-client on
   sudo chkconfig sensu-server on
   sudo chkconfig sensu-api on
   sudo chkconfig uchiwa on
 
+  cp -rp /vagrant/vagrant-sensu-config/* /etc/sensu/
+
+  sudo service rabbitmq-server restart
+  sudo service redis restart
+  sudo service sensu-client stop
   sudo service sensu-client start
+  sudo service sensu-api stop
   sudo service sensu-api start
+  sudo service sensu-server stop
   sudo service sensu-server start
-  sudo service uchiwa start
+  sudo service uchiwa restart
+
+  sudo yum -y install supervisor python-pip python-devel
+  sudo pip install -r /vagrant/requirements.txt
+
   SHELL
 end

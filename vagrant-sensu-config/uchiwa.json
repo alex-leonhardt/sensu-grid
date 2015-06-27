@@ -1,0 +1,15 @@
+{
+  "sensu": [
+    {
+      "name": "vagrant",
+      "host": "localhost",
+      "port": 4567,
+      "timeout": 5
+    }
+  ],
+  "uchiwa": {
+    "host": "0.0.0.0",
+    "port": 3000,
+    "interval": 5
+  }
+}
