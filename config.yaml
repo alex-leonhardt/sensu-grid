@@ -5,22 +5,26 @@
 #    name: vagrant
 #    url: localhost
 #    port: 4567
+#    uchiwa: http://url.to.uchiwa:port
 #  -
 #    name: local
 #    url: local
 #    port: 4567
 #    user: username
 #    password: password
+#    uchiwa: http://localhost:3000
 #
 #app:
 #  refresh: 60
-
+#  bg_color: #333333
 ---
 dcs:
   -
-    name: localhost
+    name: vagrant
     url: localhost
     port: 4567
+    uchiwa: http://localhost:3000
 
 app:
   refresh: 60
+

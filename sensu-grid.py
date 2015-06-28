@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask import abort
 import requests
 import re
 import json
@@ -97,6 +98,31 @@ def agg_data(dc, data, stashes):
     return {"name": dc['name'], "ok": ok, "warning": warn, "critical": crit, "down": down, "ack": ack}
 
 
+def agg_host_data(data, stashes):
+    """
+    returns: a dict of {"hostname": [list,of,alert,statuses], "hostname2": [list,of,alert,statuses]}
+    """
+
+    _data = data
+    _stashes = stashes
+
+    retdata = {}
+
+    for check in _data:
+        _host = check['client']
+        retdata[_host] = []
+
+    for check in _data:
+        _host = check['client']
+        if check['check']['status'] and check['check']['name'] != 'keepalive':
+            if not check_stash(_stashes, _host, check['check']['name']):
+                retdata[_host].append(check['check']['status'])
+        if check['check']['status'] and check['check']['name'] == 'keepalive':
+            retdata[_host].append(-1)
+
+    return retdata
+
+
 @app.route('/', methods=['GET'])
 def root():
     aggregated = []
@@ -105,6 +131,21 @@ def root():
             aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc)))
 
     return render_template('data.html', data=aggregated, appcfg=appcfg)
+
+
+@app.route('/<detail>', methods=['GET'])
+def detail(detail):
+    data_detail = []
+    if dcs:
+        for dc in dcs:
+            if dc['name'] == detail:
+                if check_connection(dc):
+                    data_detail = agg_host_data(get_data(dc), get_stashes(dc))
+            else:
+                abort(404)
+    else:
+        abort(404)
+    return render_template('detail.html', dc=dc, data=data_detail, appcfg=appcfg)
 
 
 @app.route('/healthcheck', methods=['GET'])

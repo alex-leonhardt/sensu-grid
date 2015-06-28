@@ -4,7 +4,14 @@ Flask application to connect to a list of sensu-api servers and displays a grid 
 
 ## screenshots
 
-![sensu-grid screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/screenshot_sensu-grid.png)
+Overview (DCs)
+
+![sensu-grid overview screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/screenshot_sensu-grid.png)
+
+Detail (per DC)
+
+![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail.png)
+
 
 ## install / setup
 
@@ -46,6 +53,7 @@ dcs:
     name: dev
     url: sensu-dev.domain.local
     port: 4567
+    uchiwa: http://sensu-dev.domain.local:3000
   -
     name: stage
     url: sensu-stage.domain.local
@@ -55,6 +63,7 @@ dcs:
     
 app:
   refresh: 60
+  bg_color: #333333
 ```
 
 ## run it

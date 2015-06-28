@@ -10,11 +10,13 @@
       </div>
 {% if data | length > 0 %}
 {% for d in data %}
-      <div class="row">
+      <div class="row spacer">
           <div class="col-md-2">
-              <div class="inside" style="text-align: right; vertical-align: middle;">
-                  <h4>{{ d.name }}</h4>
-              </div>
+              <a href="{{ d.name }}" style="text-decoration: none; color: silver;">
+                  <div class="inside" style="text-align: right; vertical-align: middle;">
+                      <h4>{{ d.name }}</h4>
+                  </div>
+              </a>
           </div>
           <div class="col-md-2">
               <div class="inside alert ok">

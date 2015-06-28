@@ -1,0 +1,34 @@
+{% extends "index.html" %}
+{% block data %}
+
+    <div class="row">
+        <div class="col-md-12" style="text-align: center">
+            <h2>{% if dc['uchiwa'] %}<a href="{{ dc['uchiwa'] }}" style="text-decoration: none; color: silver;" target="_blank">{% endif %} [ {{ dc['name'] }} ] {% if dc['uchiwa'] %}</a>{% endif %}</h2><br>
+        </div>
+    </div>
+
+        {% for d in data|batch(12) -%}
+
+                    {% for k, v in data.iteritems() %}
+                    {% if loop.first %}<div class="row spacer">{% endif %}
+
+                        <div class="col-md-1 col-sm-1 col-xs-2">
+                            <a href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ k }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}
+                               style="text-decoration: none; color: #333333;">
+                                <div class="inner {%  if v | length > 0 and v | length < 2 %}warning{% elif v | length >= 2 %}critical{% else %}ok{% endif %}
+                                {% for i in v %}{% if i == -1 %}down{% endif %}{% endfor %}"
+                                title="{{ k }}"
+                                data-toggle="tooltip"
+                                data-placement="right">
+                                    {{ v | length }}
+                                </div>
+
+                            </a>
+                        </div>
+
+                    {% if loop.last %}</div>{% endif %}
+                    {% endfor %}
+
+        {%- endfor %}
+
+{% endblock %}
