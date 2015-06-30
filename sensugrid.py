@@ -10,6 +10,21 @@ import argparse
 app = Flask(__name__)
 data = {}
 
+class Config(object):
+    DEBUG = False
+    TESTING = False
+
+    with open('config.yaml') as f:
+        config = yaml.load(f)
+
+    DCS = config['dcs']
+    APPCFG = config['app']
+
+
+app.config.from_object(Config)
+dcs = app.config['DCS']
+appcfg = app.config['APPCFG']
+
 
 def check_connection(dc):
     url = 'http://{0}:{1}/info'.format(dc['url'], dc['port'])
@@ -197,11 +212,19 @@ if __name__ == '__main__':
     try:
         with open(args.config) as f:
             config = yaml.load(f)
-    except IOError:
-        raise Exception("ERROR: Configuration file not found!")
+    except:
+        pass
 
-    dcs = config['dcs']
-    appcfg = config['app']
+    try:
+        dcs = config['dcs']
+    except:
+        dcs = []
+
+    try:
+        appcfg = config['app']
+    except:
+        appcfg = {}
 
     app.run(host='0.0.0.0',
+            port=5000,
             debug=_debug)
