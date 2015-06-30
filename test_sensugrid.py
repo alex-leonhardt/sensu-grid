@@ -1,19 +1,7 @@
 __author__ = 'ale'
 
 import unittest
-import yaml
-from sensugrid import app
-
-class Config(object):
-    DEBUG = False
-    TESTING = False
-
-    with open('config.yaml') as f:
-        config = yaml.load(f)
-
-    DCS = config['dcs']
-    APPCFG = config['app']
-
+from sensugrid import app, Config
 
 class TestingConfig(Config):
     TESTING = True

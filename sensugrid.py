@@ -5,16 +5,15 @@ import requests
 import re
 import json
 import yaml
-import argparse
+import os
 
 app = Flask(__name__)
-data = {}
 
 class Config(object):
     DEBUG = False
     TESTING = False
 
-    with open('config.yaml') as f:
+    with open(os.path.dirname(__file__) + '/conf/config.yaml') as f:
         config = yaml.load(f)
 
     DCS = config['dcs']
@@ -192,39 +191,5 @@ def healthcheck():
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Sensu-Grid')
-    parser.add_argument("-c", "--config",
-                        action="store",
-                        help="Full path to configuration file",
-                        type=str)
-    parser.add_argument("-d", "--debug",
-                        help="Run local server with debugging enabled",
-                        action="store_true",
-                        default=False)
-
-    args = parser.parse_args()
-
-    if args.debug:
-        _debug = True
-    else:
-        _debug = False
-
-    try:
-        with open(args.config) as f:
-            config = yaml.load(f)
-    except:
-        pass
-
-    try:
-        dcs = config['dcs']
-    except:
-        dcs = []
-
-    try:
-        appcfg = config['app']
-    except:
-        appcfg = {}
-
     app.run(host='0.0.0.0',
-            port=5000,
-            debug=_debug)
+            port=5000)
