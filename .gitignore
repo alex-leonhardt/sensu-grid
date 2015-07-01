@@ -54,3 +54,6 @@ crashlytics-build.properties
 
 # mac stuff
 .DS_Store
+
+# testing
+.coverage
