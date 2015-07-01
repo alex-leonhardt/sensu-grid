@@ -2,3 +2,4 @@ Flask
 PyYAML
 argparse
 requests
+gunicorn
