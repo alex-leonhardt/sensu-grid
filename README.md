@@ -103,3 +103,4 @@ Add via pip install or via your package management
 - PyYAML
 - Flask
 - argparse
+- gunicorn
