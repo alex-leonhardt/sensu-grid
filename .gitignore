@@ -2,6 +2,7 @@
 ### Vagrant template
 .vagrant/
 
+*.pyc
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
