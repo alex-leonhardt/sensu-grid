@@ -21,15 +21,15 @@ class TestCase(unittest.TestCase):
 
     def test_healthcheck(self):
         r = self.client.get('/healthcheck', content_type='application/json')
-        self.assertEqual(r.status_code, 200)
+        assert r.status_code < 400
 
     def test_root(self):
         r = self.client.get('/', content_type='text/html')
-        self.assertEqual(r.status_code, 200)
+        assert r.status_code < 400
 
     def test_detail(self):
         r = self.client.get('/vagrant', content_type='text/html')
-        assert r.status_code < 399
+        assert r.status_code < 400
         assert 'SENSU # GRID' in r.data
         assert '</html>' in r.data
 
