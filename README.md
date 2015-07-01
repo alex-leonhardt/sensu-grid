@@ -18,6 +18,8 @@ Detail (per DC)
 
 ### virtualenv
 
+- Checkout this directory into ```/opt/sensu-grid```
+
 ```
 virtualenv .
 . bin/activate
@@ -39,21 +41,17 @@ virtualenv .
 
 #### supervisord
 
-- Install supervisord (```yum install supervisor -y```)
+- Install supervisord (```yum -y install supervisor```)
 - Copy the provided config (```start-scripts/supervisord.conf```) file to ```/etc/supervisord.conf```
-- Checkout this directory into ```/opt/sensu-grid```
-- Amend config/paths as appropriate to where you've checked out this code
 
 #### upstart
 
-- Install upstart (```yum install upstart -y```)
+- Install upstart (```yum -y install upstart```)
 - Copy the provided upstart config (```start-scripts/sensu-grid.conf```) file to ```/etc/init/```
-- Checkout this directory into ```/opt/sensu-grid```
-- Amend config/paths as appropriate to where you've checked out this code
 
 ## configuration
 
-If you use usernames/passwords, ensure you set the appropriate permissions - e.g. ```chmod 640 config.yaml``` and set the owner to ```sensu-grid``` which you'll be using to run this app.
+If you use username/password, ensure you set the appropriate permissions - e.g. ```chmod 640 conf/config.yaml``` and set the owner to ```sensu-grid``` which you'll be using to run this app.
 
 ### example config
 ```
@@ -77,25 +75,25 @@ app:
 ```
 
 ## run it
+(this requires you to install all the dependencies)
 
 ```
 /usr/bin/python sensugrid.py -c /opt/sensu-grid/config.yaml
 ```
 
-#### docker
+### docker
+
+#### requirements
+
+- docker (obviously)
+- boot2docker (if you're on mac/windows)
+
+#### build / run
 
 ```
 docker build -t name/sensu-grid:latest .
 docker run -d -p 80:5000 name/sensu-grid:latest
 ```
-
-#### options
-
-| option | description                     |
-|-------:|:--------------------------------|
-| -h     | help                            |
-| -d     | debug (!) dont do this in prod  |
-| -c     | full path to configuration file |
 
 ## requirements
 
