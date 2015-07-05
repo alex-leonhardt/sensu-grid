@@ -21,23 +21,45 @@ Detail (per DC)
 - Checkout this directory into ```/opt/sensu-grid```
 
 ```
+
 virtualenv .
 . bin/activate
+
 ```
+
+### requirements
+
+#### python requirements
+
+Add via pip install or via your package management
+
+- requests
+- PyYAML
+- Flask
+- argparse
+- gunicorn
 
 ### install requirements
 
 - Install all required python libs first:
 
   ```
+
   pip install -r requirements.txt
+
   ```
+
+### app user
 
 - Create the app user:
 
   ```
+
   useradd -r sensu-grid
+  
   ```
+
+### run as a service
 
 #### supervisord
 
@@ -74,11 +96,15 @@ app:
   bg_color: #333333
 ```
 
-## run it
+## run locally / manually
 (this requires you to install all the dependencies)
 
+
+### local dev server
+
 ```
-/usr/bin/python sensugrid.py -c /opt/sensu-grid/config.yaml
+cd <checkout>
+/usr/bin/python sensugrid.py
 ```
 
 ### docker
@@ -88,19 +114,10 @@ app:
 - docker (obviously)
 - boot2docker (if you're on mac/windows)
 
-#### build / run
+#### build / run docker image
 
 ```
 docker build -t name/sensu-grid:latest .
 docker run -d -p 80:5000 name/sensu-grid:latest
 ```
 
-## requirements
-
-Add via pip install or via your package management
-
-- requests
-- PyYAML
-- Flask
-- argparse
-- gunicorn

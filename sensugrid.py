@@ -13,7 +13,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
 
-    with open(os.path.dirname(__file__) + '/conf/config.yaml') as f:
+    with open(os.path.dirname(os.path.abspath(__file__)) + '/conf/config.yaml') as f:
         config = yaml.load(f)
 
     DCS = config['dcs']
