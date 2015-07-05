@@ -155,14 +155,14 @@ h6,
 }
 /* General Links */
 a {
-  color: #3c8dbc;
+  color: silver;
 }
 a:hover,
 a:active,
 a:focus {
   outline: none;
   text-decoration: none;
-  color: #72afd2;
+  color: transparent;
 }
 /* Page Header */
 .page-header {
@@ -170,7 +170,7 @@ a:focus {
   font-size: 22px;
 }
 .page-header > small {
-  color: #666;
+  color: #333;
   display: block;
   margin-top: 5px;
 }
@@ -249,7 +249,7 @@ a:focus {
   content: "\f0c9";
 }
 .main-header .sidebar-toggle:hover {
-  color: #fff;
+  color: #333333;
 }
 .main-header .sidebar-toggle:focus,
 .main-header .sidebar-toggle:active {
@@ -295,7 +295,7 @@ a:focus {
   display: none;
 }
 .main-header .navbar-brand {
-  color: #fff;
+  color: #333333;
 }
 .content-header {
   position: relative;
@@ -351,7 +351,7 @@ a:focus {
   }
 }
 .navbar-toggle {
-  color: #fff;
+  color: #333333;
   border: 0;
   margin: 0;
   padding: 15px 15px;
@@ -937,9 +937,9 @@ a:focus {
   border-top-right-radius: 4px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  background-color: #ffffff;
+  background-color: #333333;
   padding: 7px 10px;
-  border-bottom: 1px solid #f4f4f4;
+  border-bottom: 1px solid #333333;
   color: #444444;
   font-size: 14px;
 }
@@ -951,9 +951,9 @@ a:focus {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   font-size: 12px;
-  background-color: #fff;
+  background-color: #333333;
   padding: 7px 10px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #333333;
   color: #444!important;
   text-align: center;
 }
