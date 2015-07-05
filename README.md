@@ -11,7 +11,6 @@ Overview (DCs)
 Detail (per DC)
 
 ![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail.png)
-![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detaiL-2.png)
 
 
 ## install / setup (if you dont want to use docker)

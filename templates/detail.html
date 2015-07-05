@@ -12,18 +12,19 @@
                     {% for k, v in data.iteritems() %}
                     {% if loop.first %}<div class="row spacer">{% endif %}
 
-                        <div class="col-md-1 col-sm-1 col-xs-2">
-                            <a href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ k }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}
-                               style="text-decoration: none; color: #333333;">
-                                <div class="inner {%  if v | length > 0 and v | length < 2 %}warning{% elif v | length >= 2 %}critical{% else %}ok{% endif %}
-                                {% for i in v %}{% if i == -1 %}down{% endif %}{% endfor %}"
-                                title="{{ k }}"
-                                data-toggle="tooltip"
-                                data-placement="right">
-                                    {{ v | length }}
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                        <div class="small-box {%  if v | length > 0 and v | length < 2 %}bg-yellow{% elif v | length >= 2 %}bg-red{% else %}bg-green{% endif %} {% for i in v %}{% if i == -1 %}bg-purple{% endif %}{% endfor %} icon-xs">
+
+                                <div class="inner" style="text-align: center;" title="{{ k }}" data-toggle="tooltip" data-placement="right">
+                                    <h4>{{ v | length }}</h4>
                                 </div>
 
+                            <a class="small-box-footer" href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ k }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}>
+                                    <small>Detail</small>
+                                    <i class="fa fa-arrow-circle-right"></i>
                             </a>
+
+                        </div>
                         </div>
 
                     {% if loop.last %}</div>{% endif %}

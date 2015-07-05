@@ -8,6 +8,9 @@
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/adminlte.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/_all-skins.min.css') }}">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -24,37 +27,6 @@
             width: 98%;
         }
 
-        .warning {
-              background-color: #ffb237;
-              color: #333333;
-              text-align: center;
-          }
-        .critical {
-              background-color: #f65631;
-              color: #333333;
-              text-align: center;
-          }
-        .ok {
-              background-color: #488b3b;
-              color: #333333;
-              text-align: center;
-          }
-        .down {
-            background-color: #5c378b;
-            color: silver;
-            text-align: center;
-          }
-        .ack {
-            background-color: silver;
-            color: #333333;
-            text-align: center;
-          }
-        .col-md-2 {
-              text-align: center;
-          }
-        .spacer {
-               margin-bottom: 20px;
-          }
         .center {
               margin: 0 auto;
               width: 98%;
@@ -62,7 +34,7 @@
 
       </style>
   </head>
-  <body>
+  <body class="skin-black">
 
     <div class="container-fluid center">
 
@@ -94,9 +66,11 @@
           <div class="col-md-12">&nbsp;<!-- SPACER //--></div>
       </div>
     {% block data %}{% endblock %}
-    </div>
+
+  </div>
 
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/adminlte.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     <script>

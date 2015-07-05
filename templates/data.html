@@ -1,48 +1,96 @@
 {% extends "index.html" %}
 {% block data %}
       <div class="row">
-          <div class="col-md-2" style="text-align: right"> <h2>#</h2> </div>
-          <div class="col-md-2"> <h2>OK</h2> </div>
-          <div class="col-md-2"> <h2>CRITICAL</h2> </div>
-          <div class="col-md-2"> <h2>WARNING</h2> </div>
-          <div class="col-md-2"> <h2>DOWN</h2> </div>
-          <div class="col-md-2"> <h2>ACK'd</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>#</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>OK</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>CRITICAL</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>WARNING</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>DOWN</h2> </div>
+          <div class="col-lg-2 col-xs-3"> <h2>ACK'd</h2> </div>
       </div>
 {% if data | length > 0 %}
 {% for d in data %}
-      <div class="row spacer">
-          <div class="col-md-2">
-              <a href="{{ d.name }}" style="text-decoration: none; color: silver;">
-                  <div class="inside" style="text-align: right; vertical-align: middle;">
-                      <h4>{{ d.name }}</h4>
-                  </div>
-              </a>
+    <div class="row spacer">
+
+    <div class="col-lg-2 col-xs-3">
+      <div class="small-box">
+            <div class="inner">
+              <h3>{{ d.name }}</h3>
+                <p>&nbsp;</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-cogs"></i>
+            </div>
+            <a class="small-box-footer" href="/{{ d.name }}">Detail view
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2 col-xs-3">
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{{ d.ok }}</h3>
+              <p>checks</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-check-circle"></i>
+            </div>
+
           </div>
-          <div class="col-md-2">
-              <div class="inside alert ok">
-                  <h4>{{ d.ok }}</h4>
-              </div>
+    </div>
+
+      <div class="col-lg-2 col-xs-3">
+          <div class="small-box {% if d.critical >= 2 %}bg-red{% elif d.critical > 0 and d.critical < 2 %}bg-yellow{% else %}bg-green{% endif %}">
+            <div class="inner">
+              <h3>{{ d.critical }}</h3>
+              <p>checks</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-times-circle-o"></i>
+            </div>
+
           </div>
-          <div class="col-md-2">
-              <div class="inside alert {% if d.critical >= 2 %}critical{% elif d.critical > 0 and d.critical < 2 %}warning{% else %}ok{% endif %}">
-                  <h4>{{ d.critical }}</h4>
-              </div>
+        </div>
+
+      <div class="col-lg-2 col-xs-3">
+          <div class="small-box {% if d.warning >= 1 %}bg-yellow{% else %}bg-green{% endif %}">
+            <div class="inner">
+              <h3>{{ d.warning }}</h3>
+              <p>checks</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-exclamation-circle"></i>
+            </div>
+
           </div>
-          <div class="col-md-2">
-              <div class="inside alert {% if d.warning >= 1 %}warning{% else %}ok{% endif %}">
-                  <h4>{{ d.warning }}</h4>
-              </div>
+        </div>
+
+      <div class="col-lg-2 col-xs-3">
+          <div class="small-box {% if d.down >= 1 %}bg-purple{% else %}bg-green{% endif %}">
+            <div class="inner">
+              <h3>{{ d.down }}</h3>
+              <p>hosts</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-arrow-circle-down"></i>
+            </div>
+
           </div>
-          <div class="col-md-2">
-              <div class="inside alert {% if d.down >= 1 %}down{% else %}ok{% endif %}">
-                  <h4>{{ d.down }}</h4>
-              </div>
+        </div>
+
+      <div class="col-lg-2 col-xs-3">
+          <div class="small-box bg-gray">
+            <div class="inner">
+              <h3>{{ d.ack }}</h3>
+              <p>checks</p>
+            </div>
+            <div class="icon">
+              <i class="fa fa-bell-slash"></i>
+            </div>
+
           </div>
-          <div class="col-md-2">
-              <div class="inside alert ack">
-                  <h4>{{ d.ack }}</h4>
-              </div>
-          </div>
+        </div>
 
       </div>
       {% endfor %}
