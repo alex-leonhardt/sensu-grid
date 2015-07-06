@@ -6,8 +6,12 @@ import re
 import json
 import yaml
 import os
+from reverseproxied import ReverseProxied
+
 
 app = Flask(__name__)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
+
 
 class Config(object):
     DEBUG = False
@@ -144,19 +148,19 @@ def root():
         if check_connection(dc):
             aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc)))
 
-    return render_template('data.html', data=aggregated, appcfg=appcfg)
+    return render_template('data.html', dcs=dcs, data=aggregated, appcfg=appcfg)
 
 
-@app.route('/<detail>', methods=['GET'])
-def detail(detail):
+@app.route('/show/<d>', methods=['GET'])
+def showgrid(d):
     data_detail = []
     if dcs:
         for dc in dcs:
-            if dc['name'] == detail:
+            if dc['name'] == d:
                 if check_connection(dc):
                     data_detail = agg_host_data(get_data(dc), get_stashes(dc))
-            else:
-                abort(404)
+                    if data_detail:
+                        break
     else:
         abort(404)
     return render_template('detail.html', dc=dc, data=data_detail, appcfg=appcfg)

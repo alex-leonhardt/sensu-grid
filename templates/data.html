@@ -1,5 +1,6 @@
 {% extends "index.html" %}
 {% block data %}
+
       <div class="row">
           <div class="col-lg-2 col-xs-3" style="text-align: center"> <h2>#</h2> </div>
           <div class="col-lg-2 col-xs-3"> <h2>OK</h2> </div>
@@ -21,7 +22,7 @@
             <div class="icon">
               <i class="fa fa-cogs"></i>
             </div>
-            <a class="small-box-footer" href="/{{ d.name }}">Detail view
+            <a class="small-box-footer" href="{{ url_for('showgrid', d=d.name) }}">Grid view
                 <i class="fa fa-arrow-circle-right"></i>
             </a>
       </div>
@@ -36,7 +37,9 @@
             <div class="icon">
               <i class="fa fa-check-circle"></i>
             </div>
-
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}{% endif %}{% endfor %}" target="_blank">Details
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
           </div>
     </div>
 
@@ -49,7 +52,9 @@
             <div class="icon">
               <i class="fa fa-times-circle-o"></i>
             </div>
-
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}&q=crit{% endif %}{% endfor %}" target="_blank">Details
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
           </div>
         </div>
 
@@ -62,7 +67,9 @@
             <div class="icon">
               <i class="fa fa-exclamation-circle"></i>
             </div>
-
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}&q=warn{% endif %}{% endfor %}" target="_blank">Details
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
           </div>
         </div>
 
@@ -75,7 +82,9 @@
             <div class="icon">
               <i class="fa fa-arrow-circle-down"></i>
             </div>
-
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}&q=keepalive{% endif %}{% endfor %}" target="_blank">Details
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
           </div>
         </div>
 
@@ -88,7 +97,9 @@
             <div class="icon">
               <i class="fa fa-bell-slash"></i>
             </div>
-
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/stashes?dc={{ d.name }}{% endif %}{% endfor %}" target="_blank">Details
+                <i class="fa fa-arrow-circle-right"></i>
+            </a>
           </div>
         </div>
 

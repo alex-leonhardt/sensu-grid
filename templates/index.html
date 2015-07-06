@@ -41,7 +41,7 @@
     <div class="container-fluid">
 
         <div class="navbar-header">
-          <a href="/" class="navbar-brand">SENSU # GRID</a>
+          <a href="{{ url_for('root') }}" class="navbar-brand">SENSU # GRID</a>
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
             <i class="fa fa-bars"></i>
           </button>
@@ -51,19 +51,33 @@
           <ul class="nav navbar-nav">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Detail View<span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-                {% if data | length > 0 %}
+            {% if data | length > 0 %}
+
+                <ul class="dropdown-menu" role="menu">
+
                     {% for d in data %}
                         {% if d.name %}
-                        <li><a href="/{{ d.name }}">{{ d.name }}</a></li>
+                        <li><a href="{{ url_for('showgrid', d=d.name) }}">{{ d.name }}</a></li>
                         {% endif %}
                     {% endfor %}
-                {% endif %}
-            </ul>
+                </ul>
+
             </li>
+          {% endif %}
           </ul>
 
             <ul class="nav navbar-nav navbar-right">
+                {% if dc is defined and dc['name'] is defined %}
+                    <li>
+                    {% if dc %}
+                        {% if dc['uchiwa'] %}
+                            <a href="{{ dc['uchiwa'] }}/#/events?dc={{ dc['name'] }}" style="text-decoration: none; color: silver;" target="_blank">
+                        {% else %}
+                            <a href="#">
+                        {% endif %}
+                    [ {{ dc['name'] | upper }} ] </a></li>
+                    {% endif %}
+                {% endif %}
                 <li>
                     <a href="#" id="datetime"></a>
                 </li>
@@ -86,7 +100,7 @@
 
     setInterval(function(){
         document.getElementById("datetime").innerHTML = formatAMPM();
-    }, 1000);
+    }, 10);
 
   </script>
 

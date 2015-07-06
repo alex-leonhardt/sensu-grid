@@ -1,12 +1,6 @@
 {% extends "index.html" %}
 {% block data %}
 
-    <div class="row">
-        <div class="col-md-12" style="text-align: center">
-            <h2>{% if dc['uchiwa'] %}<a href="{{ dc['uchiwa'] }}" style="text-decoration: none; color: silver;" target="_blank">{% endif %} [ {{ dc['name'] }} ] {% if dc['uchiwa'] %}</a>{% endif %}</h2><br>
-        </div>
-    </div>
-
         {% for d in data|batch(12) -%}
 
                     {% for k, v in data.iteritems() %}

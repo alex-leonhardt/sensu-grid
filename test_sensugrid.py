@@ -28,7 +28,7 @@ class TestCase(unittest.TestCase):
         assert r.status_code < 400
 
     def test_detail(self):
-        r = self.client.get('/vagrant', content_type='text/html')
+        r = self.client.get('/show/vagrant', content_type='text/html')
         assert r.status_code < 400
         assert 'SENSU # GRID' in r.data
         assert '</html>' in r.data
