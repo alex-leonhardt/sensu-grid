@@ -79,7 +79,7 @@ def check_stash(stashes, hostname, checkname):
     return False
 
 
-def agg_data(dc, data, stashes):
+def agg_data(dc, data, stashes, filters=None):
     """
     Aggregates json data and returns count of ok, warn, crit
     :param data: raw json data
@@ -91,24 +91,43 @@ def agg_data(dc, data, stashes):
     down = 0
     ack = 0
 
+    if filters and len(filters) > 0:
+        filters = filters.split(',')
+
     for i in data:
         if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
+            if filters and len(filters) > 0:
+                for f in filters:
+                    if f in i['check']['subscribers']:
+                        ok += 1
+            else:
                 ok += 1
 
         if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
             if not check_stash(stashes, i['client'], i['check']['name']):
-                warn += 1
+                if filters and len(filters) > 0:
+                    for f in filters:
+                        if f in i['check']['subscribers']:
+                            warn += 1
+                else:
+                    warn += 1
             else:
                 ack += 1
 
         if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
             if not check_stash(stashes, i['client'], i['check']['name']):
-                crit += 1
+                if filters and len(filters) > 0:
+                    for f in filters:
+                        if f in i['check']['subscribers']:
+                            crit += 1
+                else:
+                    crit += 1
             else:
                 ack += 1
 
         if i['check']['name'] == "keepalive" and i['check']['status'] == 2:
             if not check_stash(stashes, i['client'], i['check']['name']):
+                # we cannot currently apply filters as keepalive checks do not have subscribers/subscriptions
                 down += 1
             else:
                 ack += 1
@@ -151,7 +170,17 @@ def root():
     return render_template('data.html', dcs=dcs, data=aggregated, appcfg=appcfg)
 
 
-@app.route('/show/<d>', methods=['GET'])
+@app.route('/filtered/<string:subscriptions>', methods=['GET'])
+def filtered(subscriptions):
+    aggregated = []
+    for dc in dcs:
+        if check_connection(dc):
+            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), subscriptions))
+
+    return render_template('data.html', dcs=dcs, data=aggregated, appcfg=appcfg)
+
+
+@app.route('/show/<string:d>', methods=['GET'])
 def showgrid(d):
     data_detail = []
     if dcs:
