@@ -3,12 +3,11 @@ __author__ = 'ale'
 import os
 import unittest
 from sensugrid import app, Config
+from griddata import *
+from gridconfig import TestingConfig
 import coverage
 
-class TestingConfig(Config):
-    TESTING = True
-    DEBUG = True
-
+myconfig = TestingConfig
 
 class TestCase(unittest.TestCase):
 
@@ -16,7 +15,7 @@ class TestCase(unittest.TestCase):
         self.app = app
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.app.config.from_object(TestingConfig)
+        self.app.config.from_object(myconfig)
         self.client = self.app.test_client(use_cookies=True)
 
     def test_healthcheck(self):
@@ -29,6 +28,12 @@ class TestCase(unittest.TestCase):
 
     def test_detail(self):
         r = self.client.get('/show/vagrant', content_type='text/html')
+        assert r.status_code < 400
+        assert 'SENSU # GRID' in r.data
+        assert '</html>' in r.data
+
+    def test_filtered_root(self):
+        r = self.client.get('/filtered/test', content_type='text/html')
         assert r.status_code < 400
         assert 'SENSU # GRID' in r.data
         assert '</html>' in r.data
