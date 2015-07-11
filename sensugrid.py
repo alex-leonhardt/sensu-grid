@@ -9,7 +9,7 @@ from gridconfig import *
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 
-myconfig = ProdConfig
+myconfig = DevConfig
 app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
@@ -22,7 +22,7 @@ def root():
         if check_connection(dc):
             aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc)))
 
-    return render_template('data.html', dcs=dcs, data=aggregated, appcfg=appcfg)
+    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
 @app.route('/filtered/<string:subscriptions>', methods=['GET'])
@@ -30,14 +30,14 @@ def filtered(subscriptions):
     aggregated = []
     for dc in dcs:
         if check_connection(dc):
-            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), subscriptions))
+            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), get_clients(dc), subscriptions))
 
-    return render_template('data.html', dcs=dcs, data=aggregated, appcfg=appcfg)
+    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
 @app.route('/show/<string:d>', methods=['GET'])
 def showgrid(d):
-    data_detail = []
+    data_detail = {}
     if dcs:
         for dc in dcs:
             if dc['name'] == d:
@@ -47,7 +47,21 @@ def showgrid(d):
                         break
     else:
         abort(404)
-    return render_template('detail.html', dc=dc, data=data_detail, appcfg=appcfg)
+    return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs), appcfg=appcfg)
+
+
+@app.route('/show/<string:d>/filtered/<string:subscriptions>', methods=['GET'])
+def showgrid_filtered(d, subscriptions):
+    aggregated = {}
+    if dcs:
+        for dc in dcs:
+            if dc['name'] == d:
+                if check_connection(dc):
+                    aggregated = (agg_host_data(get_data(dc), get_stashes(dc), get_clients(dc), subscriptions))
+                    if len(aggregated) > 0:
+                        break
+
+    return render_template('detail.html', dc=dc, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
 @app.route('/healthcheck', methods=['GET'])

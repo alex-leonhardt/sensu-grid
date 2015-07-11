@@ -1,5 +1,6 @@
-{% extends "index.html" %}
+{% extends "menu_detail.html" %}
 {% block data %}
+
     {% for k, v in data.iteritems() %}
         {% if data.first %}<div class="row spacer">{% endif %}
                 <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
@@ -16,4 +17,5 @@
                 </div>
         {% if data.last %}</div>{% endif %}
     {% endfor %}
+
 {% endblock %}

@@ -1,0 +1,88 @@
+{% extends "index.html" %}
+{% block topmenu %}
+<nav class="navbar navbar-static-top">
+
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+          <a href="{{ url_for('root') }}" class="navbar-brand">SENSU # GRID</a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+
+            {% if data | length > 0 %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Detail View<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+
+                    {% for d in data %}
+                        {% if d.name %}
+                        <li><a href="{{ url_for('showgrid', d=d.name) }}">{{ d.name }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+
+            </li>
+          {% endif %}
+
+        {% if filter_data and filter_data | length > 0 %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter by<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+
+                    {% for d in filter_data %}
+
+                        <li><a href="{{ url_for('filtered', subscriptions=d) }}">{{ d }}</a></li>
+
+                    {% endfor %}
+                </ul>
+
+            </li>
+          {% endif %}
+
+          </ul>
+
+
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if dc is defined and dc['name'] is defined %}
+                    <li>
+                    {% if dc %}
+                        {% if dc['uchiwa'] %}
+                            <a href="{{ dc['uchiwa'] }}/#/events?dc={{ dc['name'] }}" style="text-decoration: none; color: silver;" target="_blank">
+                        {% else %}
+                            <a href="#">
+                        {% endif %}
+                    [ {{ dc['name'] | upper }} ] </a></li>
+                    {% endif %}
+                {% endif %}
+                <li>
+                    <a href="#" id="datetime"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+  </nav>
+  <script type="application/javascript">
+
+    function formatAMPM() {
+    var d = new Date(),
+        seconds = d.getSeconds().toString().length == 1? '0'+ d.getSeconds() : d.getSeconds(),
+        minutes = d.getMinutes().toString().length == 1 ? '0'+d.getMinutes() : d.getMinutes(),
+        hours = d.getHours().toString().length == 1 ? '0'+d.getHours() : d.getHours(),
+        ampm = d.getHours() >= 12 ? 'pm' : 'am',
+        months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    return days[d.getDay()]+' '+months[d.getMonth()]+' '+d.getDate()+' '+d.getFullYear()+' '+hours+':'+minutes+':'+seconds;
+    }
+
+    setInterval(function(){
+        document.getElementById("datetime").innerHTML = formatAMPM();
+    }, 10);
+
+  </script>
+{% endblock %}
