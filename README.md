@@ -2,15 +2,30 @@
 
 Flask application to connect to a list of sensu-api servers and displays a grid of OK, WARNING, CRITICAL, DOWN and ACK'd alerts.
 
+## Features
+
+- overview by data centre ( Name, OK, WARN, CRIT, DOWN, ACK )
+- detail view by data centre ( Grid of hosts, color changes based on amount of alerting checks, 1 = yellow, > 1 = red, down = purple )
+
+- filter by hosts' subscription/s ( Only shows matchin hosts' check results in overview and detail view)
+
 ## screenshots
+
 
 Overview (DCs)
 
 ![sensu-grid overview screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/screenshot_sensu-grid.png)
 
+![sensu-grid apply filter screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_main_apply_filter.png)
+
+![sensu-grid apply filter screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_main_to_detail.png)
+
+
 Detail (per DC)
 
-![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail.png)
+![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail_apply_filter.png)
+
+![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail_view_filtered.png)
 
 
 ## install / setup (if you dont want to use docker)
