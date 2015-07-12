@@ -2,7 +2,7 @@
 
 Flask application to connect to a list of sensu-api servers and displays a grid of OK, WARNING, CRITICAL, DOWN and ACK'd alerts.
 
-## Features
+## features
 
 - overview by data centre ( Name, OK, WARN, CRIT, DOWN, ACK )
 - detail view by data centre ( Grid of hosts, color changes based on amount of alerting checks, 1 = yellow, > 1 = red, down = purple )
@@ -17,19 +17,19 @@ Overview (DCs)
 
 [More screenshots](SCREENSHOTS.md)
 
-## FAQ
+# faq
 
-#### How can I filter by more than 1 subscription ? 
+#### how can I filter by more than 1 subscription ? 
 
 Amend the URL and add all the subscriptions together as a comma-separated list, e.g.: 
 http://localhost:5000/filtered/aaa,bbb,ccc,ddd
 
-#### What do the filters filter by ? 
+#### what do the filters filter by ? 
 
 They filter based on the hosts' subscriptions.
 
 
-## install / setup (if you dont want to use docker)
+# install / setup (if you dont want to use docker)
 
 ### virtualenv
 
@@ -74,7 +74,7 @@ Add via pip install or via your package management
   
   ```
 
-### run as a service
+## run as a service
 
 #### supervisord
 
