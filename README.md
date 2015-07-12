@@ -11,21 +11,22 @@ Flask application to connect to a list of sensu-api servers and displays a grid 
 
 ## screenshots
 
-
 Overview (DCs)
 
 ![sensu-grid overview screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/screenshot_sensu-grid.png)
 
-![sensu-grid apply filter screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_main_apply_filter.png)
+[More screenshots](SCREENSHOTS.md)
 
-![sensu-grid apply filter screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_main_to_detail.png)
+## FAQ
 
+#### How can I filter by more than 1 subscription ? 
 
-Detail (per DC)
+Amend the URL and add all the subscriptions together as a comma-separated list, e.g.: 
+http://localhost:5000/filtered/aaa,bbb,ccc,ddd
 
-![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail_apply_filter.png)
+#### What do the filters filter by ? 
 
-![sensu-grid detail screenshot](https://raw.githubusercontent.com/alex-leonhardt/sensu-grid/master/screenshots/sensu-grid_detail_view_filtered.png)
+They filter based on the hosts' subscriptions.
 
 
 ## install / setup (if you dont want to use docker)
