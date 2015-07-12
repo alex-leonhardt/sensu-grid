@@ -28,8 +28,22 @@ http://localhost:5000/filtered/aaa,bbb,ccc,ddd
 
 They filter based on the hosts' subscriptions.
 
+# docker
 
-# install / setup (if you dont want to use docker)
+#### requirements
+
+- docker (obviously)
+- boot2docker (if you're on mac/windows)
+
+#### build / run docker image
+
+```
+docker build -t name/sensu-grid:latest .
+docker run -d -p 80:5000 name/sensu-grid:latest
+```
+
+# install / setup
+_if you dont want to use docker_
 
 ### virtualenv
 
@@ -121,18 +135,3 @@ app:
 cd <checkout>
 /usr/bin/python sensugrid.py
 ```
-
-### docker
-
-#### requirements
-
-- docker (obviously)
-- boot2docker (if you're on mac/windows)
-
-#### build / run docker image
-
-```
-docker build -t name/sensu-grid:latest .
-docker run -d -p 80:5000 name/sensu-grid:latest
-```
-
