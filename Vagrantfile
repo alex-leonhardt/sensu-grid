@@ -43,13 +43,13 @@ Vagrant.configure(2) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
+  config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+    vb.memory = "768"
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -63,7 +63,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "forwarded_port", guest: 3000, host: 3000
   config.vm.network "forwarded_port", guest: 4567, host: 4567
-  # config.vm.network "forwarded_port", guest: 5000, host: 5000
+  #config.vm.network "forwarded_port", guest: 5000, host: 5000
 
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder ".", "/opt/sensu-grid"

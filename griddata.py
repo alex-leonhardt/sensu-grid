@@ -1,5 +1,6 @@
 from gridcheck import *
 
+
 def get_filter_data(dcs):
     filter_data = []
     for dc in dcs:
@@ -91,18 +92,12 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
                     ok += 1
                 if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
                     if not check_stash(stashes, i['client'], i['check']['name']):
-                        if filters and _filtered:
-                            warn += 1
-                        else:
-                            warn += 1
+                        warn += 1
                     else:
                         ack += 1
                 if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
                     if not check_stash(stashes, i['client'], i['check']['name']):
-                        if filters and _filtered:
-                            crit += 1
-                        else:
-                            crit += 1
+                        crit += 1
                     else:
                         ack += 1
 
@@ -113,26 +108,20 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
                     else:
                         ack += 1
 
-        else:
+        elif filters is None:
 
             if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
                 ok += 1
 
             if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
                 if not check_stash(stashes, i['client'], i['check']['name']):
-                    if filters and _filtered:
-                        warn += 1
-                    else:
-                        warn += 1
+                    warn += 1
                 else:
                     ack += 1
 
             if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
                 if not check_stash(stashes, i['client'], i['check']['name']):
-                    if filters and _filtered:
-                        crit += 1
-                    else:
-                        crit += 1
+                    crit += 1
                 else:
                     ack += 1
 
