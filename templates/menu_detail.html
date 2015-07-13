@@ -18,7 +18,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Filter by<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 {% for d in filter_data %}
-                                <li><a href="{{ url_for('showgrid_filtered', d='vagrant', subscriptions=d) }}">{{ d }}</a></li>
+                                <li><a href="{{ url_for('showgrid_filtered', d=dc['name'], subscriptions=d) }}">{{ d }}</a></li>
                                 {% endfor %}
                             </ul>
 
