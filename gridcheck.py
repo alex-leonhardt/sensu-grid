@@ -12,7 +12,7 @@ def check_connection(dc):
             return True
         else:
             return False
-    except:
+    except Exception:
         return False
 
 
