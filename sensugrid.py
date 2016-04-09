@@ -1,10 +1,26 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import nested_scopes
+from __future__ import division
+from __future__ import generators
+
 from flask import Flask
 from flask import render_template
 from flask import abort
-import json
+
 from reverseproxied import ReverseProxied
 from griddata import *
 from gridconfig import *
+
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue
+
+from threading import Thread
+
+import json
+import time
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
@@ -15,13 +31,37 @@ dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
 
 
+def get_agg_data(q, list):
+    while True:
+        dc = q.get()
+        list.append(agg_data(dc, get_data(dc), get_stashes(dc)))
+        q.task_done()
+    return list
+
+
 @app.route('/', methods=['GET'])
 def root():
-    aggregated = []
-    for dc in dcs:
-        if check_connection(dc):
-            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc)))
 
+    # _now = time.time()
+    aggregated = []
+    _queue = Queue()
+
+    for x in range(len(dcs)):
+        worker = Thread(target=get_agg_data, args=(_queue,aggregated,))
+        worker.setDaemon(True)
+        worker.start()
+
+    for dc in dcs:
+        # print (dc)
+        if check_connection(dc):
+            _queue.put(dc)
+
+    _queue.join()
+
+    # _finish = time.time()
+    # print (_finish - _now)
+
+    aggregated = sorted(aggregated, key=lambda k: k['name'])
     return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 

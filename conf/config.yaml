@@ -20,10 +20,20 @@
 ---
 dcs:
   -
-    name: vagrant
+    name: dev
     url: localhost
     port: 4567
     uchiwa: http://localhost:3000
+  -
+    name: qa
+    url: localhost
+    port: 4568
+    uchiwa: http://localhost:3001
+  -
+    name: stage
+    url: localhost
+    port: 4569
+    uchiwa: http://localhost:3002
 
 app:
   refresh: 60
