@@ -38,7 +38,7 @@
             <div class="icon">
               <i class="fa fa-check-circle"></i>
             </div>
-            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}{% endif %}{% endfor %}" target="_blank">Details
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/clients?dc={{ d.name }}&status=0{% endif %}{% endfor %}" target="_blank">Details
                 <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>
@@ -53,7 +53,7 @@
             <div class="icon">
               <i class="fa fa-times-circle-o"></i>
             </div>
-            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}&q=crit{% endif %}{% endfor %}" target="_blank">Details
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/clients?dc={{ d.name }}&status=2{% endif %}{% endfor %}" target="_blank">Details
                 <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>
@@ -68,7 +68,7 @@
             <div class="icon">
               <i class="fa fa-exclamation-circle"></i>
             </div>
-            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/events?dc={{ d.name }}&q=warn{% endif %}{% endfor %}" target="_blank">Details
+            <a class="small-box-footer" href="{% for dc in dcs %}{% if dc['name'] == d.name %}{{ dc['uchiwa'] }}/#/clients?dc={{ d.name }}&status=1{% endif %}{% endfor %}" target="_blank">Details
                 <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>

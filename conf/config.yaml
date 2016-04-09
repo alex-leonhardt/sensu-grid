@@ -2,9 +2,9 @@
 #---
 #dcs:
 #  -
-#    name: vagrant
-#    url: localhost
-#    port: 4567
+#    name: <name of the datacentre>
+#    url: <url of sensu-api>
+#    port: <sensu-api port>
 #    uchiwa: http://url.to.uchiwa:port
 #  -
 #    name: local
