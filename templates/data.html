@@ -14,7 +14,7 @@
 {% for d in data %}
     <div class="row spacer">
 
-    <div class="col-lg-2 col-xs-3">
+    <div class="col-lg-2 col-xs-3 {% if d.ok < 1 and d.critical < 1 and d.warning < 1 %}bg-red{% endif %}">
       <div class="small-box">
             <div class="inner">
               <h3>{{ d.name }}</h3>

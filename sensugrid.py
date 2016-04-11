@@ -12,15 +12,10 @@ from reverseproxied import ReverseProxied
 from griddata import *
 from gridconfig import *
 
-try:
-    from Queue import Queue
-except ImportError:
-    from queue import Queue
-
-from threading import Thread
+from multiprocessing.dummy import Pool as ThreadPool
+# https://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
 
 import json
-import time
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
@@ -31,37 +26,16 @@ dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
 
 
-def get_agg_data(q, list):
-    while True:
-        dc = q.get()
-        list.append(agg_data(dc, get_data(dc), get_stashes(dc)))
-        q.task_done()
-    return list
+def get_agg_data(dc):
+    r = agg_data(dc, get_data(dc), get_stashes(dc))
+    return r
 
 
 @app.route('/', methods=['GET'])
 def root():
-
-    # _now = time.time()
-    aggregated = []
-    _queue = Queue()
-
-    for x in range(len(dcs)):
-        worker = Thread(target=get_agg_data, args=(_queue,aggregated,))
-        worker.setDaemon(True)
-        worker.start()
-
-    for dc in dcs:
-        # print (dc)
-        if check_connection(dc):
-            _queue.put(dc)
-
-    _queue.join()
-
-    # _finish = time.time()
-    # print (_finish - _now)
-
-    aggregated = sorted(aggregated, key=lambda k: k['name'])
+    aggregated = list()
+    pool = ThreadPool(len(dcs))
+    aggregated = pool.map(get_agg_data, dcs)
     return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 

@@ -25,7 +25,7 @@ dcs:
     port: 4567
     uchiwa: http://localhost:3000
   -
-    name: qa
+    name: uat
     url: localhost
     port: 4568
     uchiwa: http://localhost:3001

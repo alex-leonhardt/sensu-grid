@@ -39,9 +39,9 @@ def get_data(dc):
     r = None
     try:
         if 'user' and 'password' in dc:
-                r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']))
         else:
-                r = requests.get(url)
+            r = requests.get(url)
 
     except Exception:
         pass
@@ -117,19 +117,44 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
                 if sub in filters:
                     _filtered.append(c['name'])
 
-    for i in data:
+    if data:
+        for i in data:
 
-        if len(_filtered) > 0:
+            if len(_filtered) > 0:
 
-            if i['client'] in _filtered:
+                if i['client'] in _filtered:
+
+                    if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
+                        ok += 1
+                    if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
+                        if not check_stash(stashes, i['client'], i['check']['name']):
+                            warn += 1
+                        else:
+                            ack += 1
+                    if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
+                        if not check_stash(stashes, i['client'], i['check']['name']):
+                            crit += 1
+                        else:
+                            ack += 1
+
+                    if i['check']['name'] == "keepalive" and i['check']['status'] == 2:
+                        if not check_stash(stashes, i['client'], i['check']['name']):
+                            # we cannot currently apply filters as keepalive checks do not have subscribers/subscriptions
+                            down += 1
+                        else:
+                            ack += 1
+
+            elif filters is None:
 
                 if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
                     ok += 1
+
                 if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
                     if not check_stash(stashes, i['client'], i['check']['name']):
                         warn += 1
                     else:
                         ack += 1
+
                 if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
                     if not check_stash(stashes, i['client'], i['check']['name']):
                         crit += 1
@@ -142,30 +167,6 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
                         down += 1
                     else:
                         ack += 1
-
-        elif filters is None:
-
-            if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
-                ok += 1
-
-            if i['check']['status'] == 1 and not i['check']['name'] == "keepalive":
-                if not check_stash(stashes, i['client'], i['check']['name']):
-                    warn += 1
-                else:
-                    ack += 1
-
-            if i['check']['status'] == 2 and not i['check']['name'] == "keepalive":
-                if not check_stash(stashes, i['client'], i['check']['name']):
-                    crit += 1
-                else:
-                    ack += 1
-
-            if i['check']['name'] == "keepalive" and i['check']['status'] == 2:
-                if not check_stash(stashes, i['client'], i['check']['name']):
-                    # we cannot currently apply filters as keepalive checks do not have subscribers/subscriptions
-                    down += 1
-                else:
-                    ack += 1
 
     return {"name": dc['name'], "ok": ok, "warning": warn, "critical": crit, "down": down, "ack": ack}
 
