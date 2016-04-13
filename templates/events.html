@@ -1,0 +1,21 @@
+{% extends "menu_detail.html" %}
+{% block data %}
+
+    {% for event in data %}
+        {% if loop.first or loop.index0 % 3 == 0 %}<div class="row spacer">{% endif %}
+            <div class="col-xs-4">
+                <div class="small-box {% if event.check.status == 1 %}bg-yellow{% elif event.check.status == 2 %}bg-red{% elif event.check.status == 0 %}bg-green{% else %}bg-gray{% endif %} icon-xs">
+                    <div class="inner" style="text-align: center;" title="{{ k }}" data-toggle="tooltip" data-placement="right">
+                        <h2>{{ event.check.name }}</h2>
+                        <p>{{ event.client.display_name or event.client.displayName or event.client.name }}</p>
+                    </div>
+                    <a class="small-box-footer" href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ event.client.name }}?check={{ event.check.name }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}>
+                        <small>Detail</small>
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        {% if loop.last or loop.index0 % 3 == 2 %}</div>{% endif %}
+    {% endfor %}
+
+{% endblock %}
