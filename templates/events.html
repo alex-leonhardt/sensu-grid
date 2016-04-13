@@ -16,6 +16,23 @@
                 </div>
             </div>
         {% if loop.last or loop.index0 % 3 == 2 %}</div>{% endif %}
+    {% else %}
+        <div class="row spacer">
+            <div class="col-xs-12">
+                <div class="small-box bg-green">
+                    <div class="inner" style="text-align: center">
+                    {% if appcfg.no_fail_image %}
+                        <img src="{{ appcfg.no_fail_image }}" alt="All checks passing" />
+                    {% else %}
+                        <h2>All checks passing</h2>
+                    {% endif %}
+                    <div class="icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endfor %}
 
 {% endblock %}
