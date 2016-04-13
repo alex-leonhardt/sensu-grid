@@ -102,6 +102,8 @@ Add via pip install or via your package management
 
 ## configuration
 
+You should copy the ```conf/config.yaml.sample``` file to ```conf/config.yaml``` and edit as appropriate.
+
 If you use username/password, ensure you set the appropriate permissions - e.g. ```chmod 640 conf/config.yaml``` and set the owner to ```sensu-grid``` which you'll be using to run this app.
 
 ### example config
