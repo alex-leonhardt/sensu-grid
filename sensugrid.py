@@ -120,6 +120,33 @@ def healthcheck():
     return json.dumps(ret)
 
 
+@app.template_filter('color_for_event')
+def color_for_event(event):
+    if event['check']['name'] == 'keepalive':
+        return 'purple'
+    if event['check']['status'] == 1:
+        return 'yellow'
+    if event['check']['status'] == 2:
+        return 'red'
+    if event['check']['status'] == 0:
+        return 'green'
+
+    return 'gray'
+
+
+@app.template_filter('icon_for_event')
+def icon_for_event(event):
+    if event['check']['name'] == 'keepalive':
+        return 'arrow-circle-down'
+    if event['check']['status'] == 1:
+        return 'exclamation-circle'
+    if event['check']['status'] == 2:
+        return 'times-circle-o'
+    if event['check']['status'] == 0:
+        return 'check-circle'
+
+    return 'question-circle'
+
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0',
