@@ -96,12 +96,16 @@ def get_stashes(dc):
 
 
 def filter_object(obj, search):
-    for value in obj.values():
-        if type(value) == object:
-            return filter_object(value, search)
-
-        if unicode(search) in unicode(value):
-            return True
+    if type(obj) == dict:
+        for k, value in obj.iteritems():
+            if filter_object(value, search):
+                return True
+    elif type(obj) == list:
+        for value in obj:
+            if filter_object(value, search):
+                return True
+    else:
+        return unicode(search) in unicode(obj)
 
     return False
 
@@ -109,9 +113,7 @@ def filter_object(obj, search):
 def filter_events(filters):
     def filter_event(event):
         for f in filters:
-            if filter_object(event['client'], f):
-                return True
-            if filter_object(event['check'], f):
+            if filter_object(event, f):
                 return True
         return False
 
