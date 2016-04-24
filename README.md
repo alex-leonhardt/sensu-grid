@@ -6,7 +6,7 @@ Flask application to connect to a list of sensu-api servers and displays a grid 
 
 - overview by data centre ( Name, OK, WARN, CRIT, DOWN, ACK )
 - detail view by data centre ( Grid of hosts, color changes based on amount of alerting checks, 1 = yellow, > 1 = red, down = purple )
-
+- Events view by data centre (Grid of events which are currently alerting/warning/unknown)
 - filter by hosts' subscription/s ( Only shows matchin hosts' check results in overview and detail view)
 
 ## screenshots
@@ -19,14 +19,14 @@ Overview (DCs)
 
 # faq
 
-#### how can I filter by more than 1 subscription ? 
+#### how can I filter by more than 1 value? 
 
-Amend the URL and add all the subscriptions together as a comma-separated list, e.g.: 
+Amend the URL and add all the filters together as a comma-separated list, e.g.: 
 http://localhost:5000/filtered/aaa,bbb,ccc,ddd
 
 #### what do the filters filter by ? 
 
-They filter based on the hosts' subscriptions.
+They filter based on the hosts' subscriptions, except in the Events view where they filter on all properties of the check and the host.
 
 # docker
 
@@ -101,6 +101,8 @@ Add via pip install or via your package management
 - Copy the provided upstart config (```start-scripts/sensu-grid.conf```) file to ```/etc/init/```
 
 ## configuration
+
+You should copy the ```conf/config.yaml.sample``` file to ```conf/config.yaml``` and edit as appropriate.
 
 If you use username/password, ensure you set the appropriate permissions - e.g. ```chmod 640 conf/config.yaml``` and set the owner to ```sensu-grid``` which you'll be using to run this app.
 

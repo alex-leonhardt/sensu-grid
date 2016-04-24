@@ -95,6 +95,54 @@ def get_stashes(dc):
     return data
 
 
+def filter_object(obj, search):
+    if type(obj) == dict:
+        for k, value in obj.iteritems():
+            if filter_object(value, search):
+                return True
+    elif type(obj) == list:
+        for value in obj:
+            if filter_object(value, search):
+                return True
+    else:
+        return unicode(search) in unicode(obj)
+
+    return False
+
+
+def filter_events(filters):
+    def filter_event(event):
+        for f in filters:
+            if filter_object(event, f):
+                return True
+        return False
+
+    return filter_event
+
+
+def get_events(dc, filters=[]):
+    url = 'http://{0}:{1}/events'.format(dc['url'], dc['port'])
+
+    data = []
+    r = None
+
+    try:
+        if 'user' and 'password' in dc:
+            r = requests.get(url, auth=(dc['user'], dc['password']))
+            data = r.json()
+        else:
+            r = requests.get(url)
+            data = r.json()
+    finally:
+        if r:
+            r.close()
+
+    if len(filters) > 0:
+        return filter(filter_events(filters), data)
+    else:
+        return data
+
+
 def agg_data(dc, data, stashes, client_data=None, filters=None):
     """
     Aggregates json data and returns count of ok, warn, crit

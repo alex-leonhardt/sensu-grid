@@ -1,0 +1,41 @@
+{% extends "menu_detail.html" %}
+{% block data %}
+
+    {% for event in data %}
+        {% if loop.first or loop.index0 % 3 == 0 %}<div class="row spacer">{% endif %}
+            <div class="col-xs-4">
+                <div class="small-box bg-{{ event|color_for_event }} icon-xs">
+                    <div class="inner" style="text-align: center;" title="{{ k }}" data-toggle="tooltip" data-placement="right">
+                        <h1>{{ event.check.name|replace('_', ' ')|replace('-', ' ')|replace('.', ' ') }}</h1>
+                        <div class="icon">
+                          <i class="fa fa-{{ event|icon_for_event }}"></i>
+                        </div>
+                        <p>{{ event.client.display_name or event.client.displayName or event.client.name }}</p>
+                    </div>
+                    <a class="small-box-footer" href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ event.client.name }}?check={{ event.check.name }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}>
+                        <small>Detail</small>
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        {% if loop.last or loop.index0 % 3 == 2 %}</div>{% endif %}
+    {% else %}
+        <div class="row spacer">
+            <div class="col-xs-12">
+                <div class="small-box bg-green">
+                    <div class="inner" style="text-align: center">
+                    {% if appcfg.no_fail_image %}
+                        <img src="{{ appcfg.no_fail_image }}" alt="All checks passing" />
+                    {% else %}
+                        <h2>All checks passing</h2>
+                    {% endif %}
+                    <div class="icon">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}
