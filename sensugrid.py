@@ -39,24 +39,30 @@ def root():
     return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
-@app.route('/filtered/<string:subscriptions>', methods=['GET'])
-def filtered(subscriptions):
+@app.route('/filtered/<string:filters>', methods=['GET'])
+def filtered(filters):
     aggregated = []
     for dc in dcs:
         if check_connection(dc):
-            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), get_clients(dc), subscriptions))
+            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), get_clients(dc), filters))
 
     return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
 @app.route('/show/<string:d>', methods=['GET'])
-def showgrid(d):
+@app.route('/show/<string:d>/filtered/<string:filters>', methods=['GET'])
+def showgrid(d, filters=None):
     data_detail = {}
     if dcs:
         for dc in dcs:
             if dc['name'] == d:
                 if check_connection(dc):
-                    data_detail = agg_host_data(get_data(dc), get_stashes(dc))
+                    if filters:
+                        clients = get_clients(dc)
+                    else:
+                        clients = None
+
+                    data_detail = agg_host_data(get_data(dc), get_stashes(dc), clients, filters)
                     if data_detail:
                         break
     else:
@@ -64,18 +70,27 @@ def showgrid(d):
     return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
-@app.route('/show/<string:d>/filtered/<string:subscriptions>', methods=['GET'])
-def showgrid_filtered(d, subscriptions):
-    aggregated = {}
+@app.route('/events/<string:d>')
+@app.route('/events/<string:d>/filtered/<string:filters>')
+def events(d, filters=''):
+    results = []
+
+    dc_found = False
+
     if dcs:
         for dc in dcs:
             if dc['name'] == d:
+                dc_found = True
                 if check_connection(dc):
-                    aggregated = (agg_host_data(get_data(dc), get_stashes(dc), get_clients(dc), subscriptions))
-                    if len(aggregated) > 0:
-                        break
+                    results += get_events(dc, filters.split(','))
+                break
 
-    return render_template('detail.html', dc=dc, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
+    if dc_found is False:
+        abort(404)
+
+    results = sorted(results, lambda x, y: cmp(x['check']['status'], y['check']['status']), reverse=True)
+
+    return render_template('events.html', dc=dc, data=results, filter_data=get_filter_data(dcs), appcfg=appcfg)
 
 
 @app.route('/healthcheck', methods=['GET'])
@@ -104,6 +119,33 @@ def healthcheck():
 
     return json.dumps(ret)
 
+
+@app.template_filter('color_for_event')
+def color_for_event(event):
+    if event['check']['name'] == 'keepalive':
+        return 'purple'
+    if event['check']['status'] == 1:
+        return 'yellow'
+    if event['check']['status'] == 2:
+        return 'red'
+    if event['check']['status'] == 0:
+        return 'green'
+
+    return 'gray'
+
+
+@app.template_filter('icon_for_event')
+def icon_for_event(event):
+    if event['check']['name'] == 'keepalive':
+        return 'arrow-circle-down'
+    if event['check']['status'] == 1:
+        return 'exclamation-circle'
+    if event['check']['status'] == 2:
+        return 'times-circle-o'
+    if event['check']['status'] == 0:
+        return 'check-circle'
+
+    return 'question-circle'
 
 if __name__ == '__main__':
 

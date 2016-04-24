@@ -57,3 +57,6 @@ crashlytics-build.properties
 
 # testing
 .coverage
+
+# Config
+conf/config.yaml
