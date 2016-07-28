@@ -47,13 +47,14 @@ EOF
 
     config.vm.define "vagrant1" do |vagrant1|
 
-        vagrant1.vm.box = "bento/centos-6.7"
+        vagrant1.vm.box = "bento/centos-7.2"
         vagrant1.vm.provider "virtualbox" do |vb|
             vb.memory = "768"
         end
 
         vagrant1.vm.network "forwarded_port", guest: 3000, host: 3000
         vagrant1.vm.network "forwarded_port", guest: 4567, host: 4567
+        vagrant1.vm.network "forwarded_port", guest: 5000, host: 5000
 
         vagrant1.vm.synced_folder ".", "/vagrant"
         vagrant1.vm.synced_folder ".", "/opt/sensu-grid"

@@ -1,5 +1,3 @@
-__author__ = 'ale'
-
 import os
 import unittest
 from sensugrid import app, Config
@@ -7,7 +5,9 @@ from griddata import *
 from gridconfig import TestingConfig
 import coverage
 
+__author__ = 'ale'
 myconfig = TestingConfig
+
 
 class TestCase(unittest.TestCase):
 
