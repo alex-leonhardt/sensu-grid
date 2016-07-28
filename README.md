@@ -144,5 +144,5 @@ a healthcheck is available at ```/healthcheck``` which returns json formatted te
 
 example:
 ```
-curl http://localhost:5000 | python -m json.tool
+curl http://localhost:5000/healthcheck | python -m json.tool
 ```
