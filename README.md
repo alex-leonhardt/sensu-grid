@@ -137,3 +137,12 @@ app:
 cd <checkout>
 /usr/bin/python sensugrid.py
 ```
+
+## healthcheck
+
+a healthcheck is available at ```/healthcheck``` which returns json formatted text, which you can pipe into ```python -m json.tool```
+
+example:
+```
+curl http://localhost:5000 | python -m json.tool
+```
