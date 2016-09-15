@@ -5,7 +5,8 @@
         {% if data.first %}<div class="row spacer">{% endif %}
                 <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
                     <div class="small-box {%  if v | length > 0 and v | length < 2 %}bg-yellow{% elif v | length >= 2 %}bg-red{% else %}bg-green{% endif %} {% for i in v %}{% if i == -1 %}bg-purple{% endif %}{% endfor %} icon-xs">
-                        <div class="inner" style="text-align: center;" title="{{ k }}" data-toggle="tooltip" data-placement="right">
+                        <div class="inner" style="text-align: center; overflow: hidden" title="{{ k }}" data-toggle="tooltip" data-placement="right">
+                            <h4>{{ k }}</h4>
                             <h4>{{ v | length }}</h4>
                         </div>
                         <a class="small-box-footer" href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ k }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}>
