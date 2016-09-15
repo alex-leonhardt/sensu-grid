@@ -3,12 +3,12 @@
 
     {% for k, v in data.iteritems() | sort %}
         {% if data.first %}<div class="row spacer">{% endif %}
-                <div class="{% if (data | length > 50) %} col-lg-1 col-md-1 col-sm-2 {% elif (data | length > 20) %} col-lg-2 col-md-2 col-sm-3 {% else %} col-lg-4 col-md-4 col-sm-4 {% endif %}  col-xs-2">
+                <div class="{% if (data | length > 50) %} col-lg-1 col-md-1 col-sm-2 {% else %} col-lg-2 col-md-2 col-sm-2 {% endif %}  col-xs-2">
                     <a href="{% if dc['uchiwa'] %}{{ dc['uchiwa'] }}/#/client/{{ dc['name'] }}/{{ k }}{% else %}#{% endif %}" {% if dc['uchiwa'] %}target="_blank"{% endif %}>
                         <div class="small-box {%  if v | length > 0 and v | length < 2 %}bg-yellow{% elif v | length >= 2 %}bg-red{% else %}bg-green{% endif %} {% for i in v %}{% if i == -1 %}bg-purple{% endif %}{% endfor %} icon-xs">
                             <div class="inner" style="text-align: center; overflow: hidden" title="{{ k }}" data-toggle="tooltip" data-placement="right">
-                                <h2 style="font-weight: normal">{{ k }}</h2>
-                                <h3>{{ v | length }}</h3>
+                                <h4>{{ k }}</h4>
+                                <h4>{{ v | length }}</h4>
                             </div>
                         </div>
                     </a>
