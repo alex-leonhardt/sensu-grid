@@ -75,10 +75,9 @@ def get_clients(dc):
 
 
 def get_stashes(dc):
-    url = 'http://{0}:{1}/stashes'.format(dc['url'], dc['port'])
+    url = 'http://{0}:{1}/silenced'.format(dc['url'], dc['port'])
     data = None
     r = None
-
     try:
         if 'user' and 'password' in dc:
             r = requests.get(url, auth=(dc['user'], dc['password']))

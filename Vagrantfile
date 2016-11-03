@@ -11,8 +11,8 @@ config.vm.provision "shell", inline: <<-SHELL
     sudo yum -y install epel-release vim-enhanced
     sudo su -c cat >/etc/yum.repos.d/sensu.repo<<EOF
 [sensu]
-name=sensu-main
-baseurl=http://repos.sensuapp.org/yum/el/6/x86_64/
+name=sensu
+baseurl=http://sensu.global.ssl.fastly.net/yum/\\$basearch/
 gpgcheck=0
 enabled=1
 EOF

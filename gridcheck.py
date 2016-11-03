@@ -18,9 +18,8 @@ def check_connection(dc):
 
 def check_stash(stashes, hostname, checkname):
     for s in stashes:
-        if re.match('^silence/' + hostname + '/' + checkname + '$', s['path']):
+        if re.match('^client:' + hostname + ':' + checkname + '$', s['id']):
             return True
-        if re.match('^silence/' + hostname + '$', s['path']):
+        if re.match('^client:' + hostname + ':\*', s['id']):
             return True
     return False
-
