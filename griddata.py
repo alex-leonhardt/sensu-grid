@@ -1,95 +1,123 @@
-from gridcheck import *
+import requests
+import six
+
+from functools import partial
+from multiprocessing.dummy import Pool as ThreadPool
+
+from gridcheck import check_stash
 
 
-def get_filter_data(dcs):
-    filter_data = []
-    data = None
+def _filter_data(timeout, dc):
+    filter_data = list()
     r = None
-
-    for dc in dcs:
-        url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
-        try:
-            if 'user' and 'password' in dc:
-                r = requests.get(url, auth=(dc['user'], dc['password']))
-            else:
-                r = requests.get(url)
-        except Exception:
-            pass
-        finally:
-            if r:
-                data = r.json()
-                r.close()
-
-        if data:
-            for i in data:
-                for s in i['subscriptions']:
-                    if s not in filter_data:
-                        filter_data.append(s)
-
-    if filter_data:
-        assert type(filter_data) == list
-        return filter_data
-
-    return []
-
-
-def get_data(dc):
-    url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
     data = None
-    r = None
+    url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     try:
         if 'user' and 'password' in dc:
-            r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=timeout)
         else:
-            r = requests.get(url)
-
-    except Exception:
+            r = requests.get(url, timeout=timeout)
+        r.raise_for_status()
+    except Exception as ex:
+        print("Got exception while filtering on clients: {}".format(str(ex)))
         pass
     finally:
         if r:
             data = r.json()
             r.close()
+        else:
+            print("no reponse")
+
+    if data:
+        for i in data:
+            for s in i['subscriptions']:
+                if s not in filter_data:
+                    filter_data.append(s)
+    else:
+        print("No response data")
+    return filter_data
+
+
+def get_filter_data(dcs, timeout):
+    aggregated = list()
+    pool = ThreadPool(len(dcs))
+    func = partial(_filter_data, timeout)
+    aggregated = pool.map(func, dcs)
+    if aggregated:
+        assert type(aggregated) == list
+        return aggregated
+
+    return []
+
+
+def get_data(dc, timeout):
+    url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
+    data = None
+    r = None
+    try:
+        if 'user' and 'password' in dc:
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=timeout)
+        else:
+            r = requests.get(url, timeout=timeout)
+        r.raise_for_status()
+    except Exception as ex:
+        print("Got exception while retrieving data for dc: {} ex: {}".format(dc, str(ex)))
+        pass
+    finally:
+        if r:
+            data = r.json()
+            r.close()
+        else:
+            print("no reponse")
 
     return data
 
 
-def get_clients(dc):
+def get_clients(dc, timeout):
     url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     data = None
     r = None
 
     try:
         if 'user' and 'password' in dc:
-            r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=timeout)
+            r.raise_for_status()
             data = r.json()
         else:
-            r = requests.get(url)
+            r = requests.get(url, timeout=timeout)
             data = r.json()
-    except Exception:
+    except Exception as ex:
+        print("Got exception while retrieving clients for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
+        else:
+            print("no reponse")
 
     return data
 
 
-def get_stashes(dc):
+def get_stashes(dc, timeout):
     url = 'http://{0}:{1}/silenced'.format(dc['url'], dc['port'])
     data = None
     r = None
     try:
         if 'user' and 'password' in dc:
-            r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=timeout)
+            r.raise_for_status()
             data = r.json()
         else:
-            r = requests.get(url)
+            r = requests.get(url, timeout=timeout)
             data = r.json()
-    except Exception:
+    except Exception as ex:
+        print("Got exception while retrieving stashes for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
+        else:
+            print("no reponse")
 
     return data
 
@@ -104,7 +132,7 @@ def filter_object(obj, search):
             if filter_object(value, search):
                 return True
     else:
-        return unicode(search) in unicode(obj)
+        return six.u(search) in six.u(obj)
 
     return False
 
@@ -119,7 +147,7 @@ def filter_events(filters):
     return filter_event
 
 
-def get_events(dc, filters=[]):
+def get_events(dc, timeout, filters=[]):
     url = 'http://{0}:{1}/events'.format(dc['url'], dc['port'])
 
     data = []
@@ -127,11 +155,15 @@ def get_events(dc, filters=[]):
 
     try:
         if 'user' and 'password' in dc:
-            r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=timeout)
+            r.raise_for_status()
             data = r.json()
         else:
-            r = requests.get(url)
+            r = requests.get(url, timeout=timeout)
             data = r.json()
+    except Exception as ex:
+        print("Got exception while retrieving events for dc: {} ex: {}".format(dc, str(ex)))
+        pass
     finally:
         if r:
             r.close()
@@ -186,7 +218,8 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
 
                     if i['check']['name'] == "keepalive" and i['check']['status'] == 2:
                         if not check_stash(stashes, i['client'], i['check']['name']):
-                            # we cannot currently apply filters as keepalive checks do not have subscribers/subscriptions
+                            # we cannot currently apply filters as keepalive checks do
+                            # not have subscribers/subscriptions
                             down += 1
                         else:
                             ack += 1

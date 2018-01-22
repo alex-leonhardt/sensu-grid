@@ -1,6 +1,7 @@
 import requests
 import re
 
+
 def check_connection(dc):
     url = 'http://{0}:{1}/info'.format(dc['url'], dc['port'])
     try:
