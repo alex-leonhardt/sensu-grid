@@ -1,3 +1,4 @@
+import logging
 import requests
 import six
 
@@ -7,10 +8,14 @@ from multiprocessing.dummy import Pool as ThreadPool
 from gridcheck import check_stash
 
 
+LOGGER = logging.getLogger(__name__)
+
+
 def _filter_data(timeout, dc):
     filter_data = list()
     r = None
     data = None
+    LOGGER.debug("Retrieving filters for datacenter: {}".format(dc['name']))
     url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     try:
         if 'user' and 'password' in dc:
@@ -19,14 +24,14 @@ def _filter_data(timeout, dc):
             r = requests.get(url, timeout=timeout)
         r.raise_for_status()
     except Exception as ex:
-        print("Got exception while filtering on clients: {}".format(str(ex)))
+        LOGGER.error("Got exception while filtering on clients: {}".format(str(ex)))
         pass
     finally:
         if r:
             data = r.json()
             r.close()
         else:
-            print("no reponse")
+            LOGGER.error("no reponse")
 
     if data:
         for i in data:
@@ -34,7 +39,8 @@ def _filter_data(timeout, dc):
                 if s not in filter_data:
                     filter_data.append(s)
     else:
-        print("No response data")
+        LOGGER.error("No response data")
+    LOGGER.debug("Filter Retrieval for datacenter {} complete".format(dc['name']))
     return filter_data
 
 
@@ -51,6 +57,7 @@ def get_filter_data(dcs, timeout):
 
 
 def get_data(dc, timeout):
+    LOGGER.debug("Retrieving data for datacenter: {}".format(dc['name']))
     url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -61,19 +68,21 @@ def get_data(dc, timeout):
             r = requests.get(url, timeout=timeout)
         r.raise_for_status()
     except Exception as ex:
-        print("Got exception while retrieving data for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving data for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             data = r.json()
             r.close()
         else:
-            print("no reponse")
+            LOGGER.error("no reponse")
 
+    LOGGER.debug("Data Retrieval for datacenter {} complete".format(dc['name']))
     return data
 
 
 def get_clients(dc, timeout):
+    LOGGER.debug("Retrieving clients for datacenter: {}".format(dc['name']))
     url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -87,18 +96,20 @@ def get_clients(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        print("Got exception while retrieving clients for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving clients for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
         else:
-            print("no reponse")
+            LOGGER.error("no reponse")
 
+    LOGGER.debug("Client Retrieval for datacenter {} complete".format(dc['name']))
     return data
 
 
 def get_stashes(dc, timeout):
+    LOGGER.debug("Retrieving stashes for datacenter: {}".format(dc['name']))
     url = 'http://{0}:{1}/silenced'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -111,14 +122,15 @@ def get_stashes(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        print("Got exception while retrieving stashes for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving stashes for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
         else:
-            print("no reponse")
+            LOGGER.error("no reponse")
 
+    LOGGER.debug("Stash Retrieval for datacenter {} complete".format(dc['name']))
     return data
 
 
@@ -148,6 +160,7 @@ def filter_events(filters):
 
 
 def get_events(dc, timeout, filters=[]):
+    LOGGER.debug("Retrieving events for datacenter: {}".format(dc['name']))
     url = 'http://{0}:{1}/events'.format(dc['url'], dc['port'])
 
     data = []
@@ -162,12 +175,13 @@ def get_events(dc, timeout, filters=[]):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        print("Got exception while retrieving events for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving events for dc: {} ex: {}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
 
+    LOGGER.debug("Events Retrieval for datacenter {} complete".format(dc['name']))
     if len(filters) > 0:
         return filter(filter_events(filters), data)
     else:

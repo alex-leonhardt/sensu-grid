@@ -25,6 +25,9 @@ from multiprocessing.dummy import Pool as ThreadPool
 # https://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
 
 import json
+import logging
+import logging.config
+
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
@@ -34,6 +37,56 @@ app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
 timeout = appcfg.get('requests_timeout', 10)
+log_level = appcfg.get('logging_level', 'INFO').upper()
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": log_level,
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "loggers": {
+        "requests": {
+            "level": "WARNING",
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "sensugrid": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "gridcheck": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "gridconfig": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "griddata": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+    },
+    "": {
+        "level": log_level,
+        "handlers": ["console"]
+    }
+})
+LOGGER = logging.getLogger(__name__)
 
 
 # Python3 doesn't have cmp
