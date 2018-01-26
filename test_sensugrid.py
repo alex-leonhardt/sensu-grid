@@ -1,6 +1,6 @@
 import os
 import unittest
-from sensugrid import app, Config
+from sensugrid import app
 from griddata import *
 from gridconfig import TestingConfig
 import coverage
