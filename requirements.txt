@@ -1,5 +1,6 @@
-Flask
-PyYAML
+Flask==0.12.2
+PyYAML==3.12
 argparse
-requests
-gunicorn
+requests==2.18.4
+gunicorn==19.7.1
+six==1.11.0

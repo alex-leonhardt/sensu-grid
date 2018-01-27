@@ -3,7 +3,7 @@
 .vagrant/
 .idea/
 .vscode/
-
+.noseids
 *.pyc
 
 ### JetBrains template

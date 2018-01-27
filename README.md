@@ -19,12 +19,12 @@ Overview (DCs)
 
 # faq
 
-#### how can I filter by more than 1 value? 
+#### how can I filter by more than 1 value?
 
-Amend the URL and add all the filters together as a comma-separated list, e.g.: 
+Amend the URL and add all the filters together as a comma-separated list, e.g.:
 http://localhost:5000/filtered/aaa,bbb,ccc,ddd
 
-#### what do the filters filter by ? 
+#### what do the filters filter by ?
 
 They filter based on the hosts' subscriptions, except in the Events view where they filter on all properties of the check and the host.
 
@@ -85,7 +85,7 @@ Add via pip install or via your package management
   ```
 
   useradd -r sensu-grid
-  
+
   ```
 
 ## run as a service
@@ -121,10 +121,13 @@ dcs:
     port: 4567
     user: apiuser
     password: apipassword
-    
+
 app:
   refresh: 60
   bg_color: #333333
+  # This is a python requests layer timeout, as by default, it does not timeout
+  requests_timeout: 10
+  logging_level: info
 ```
 
 ## run locally / manually

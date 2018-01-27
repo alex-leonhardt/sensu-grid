@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "diskspace": {
+      "command": "echo -n CRITICAL; exit 2;",
+      "subscribers": [
+        "default"
+      ],
+      "standalone": true,
+      "interval": 60
+    }
+}
+}

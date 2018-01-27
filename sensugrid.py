@@ -9,13 +9,25 @@ from flask import render_template
 from flask import abort
 
 from reverseproxied import ReverseProxied
-from griddata import *
-from gridconfig import *
+from gridcheck import check_connection
+from griddata import (
+    agg_data,
+    get_data,
+    agg_host_data,
+    get_stashes,
+    get_filter_data,
+    get_clients,
+    get_events
+)
+from gridconfig import DevConfig
 
 from multiprocessing.dummy import Pool as ThreadPool
 # https://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
 
 import json
+import logging
+import logging.config
+
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
@@ -24,10 +36,66 @@ myconfig = DevConfig
 app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
+timeout = appcfg.get('requests_timeout', 10)
+log_level = appcfg.get('logging_level', 'INFO').upper()
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": log_level,
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "loggers": {
+        "requests": {
+            "level": "WARNING",
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "sensugrid": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "gridcheck": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "gridconfig": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+        "griddata": {
+            "level": log_level,
+            "handlers": ["console"],
+            "propagate": False
+        },
+    },
+    "": {
+        "level": log_level,
+        "handlers": ["console"]
+    }
+})
+LOGGER = logging.getLogger(__name__)
+
+
+# Python3 doesn't have cmp
+def _cmp(x, y):
+    return (x > y) - (x < y)
 
 
 def get_agg_data(dc):
-    r = agg_data(dc, get_data(dc), get_stashes(dc))
+    r = agg_data(dc, get_data(dc, timeout), get_stashes(dc, timeout))
     return r
 
 
@@ -41,7 +109,7 @@ def root():
         print("Exception: ", e)
     finally:
         pool.close()
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
+    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/filtered/<string:filters>', methods=['GET'])
@@ -49,9 +117,10 @@ def filtered(filters):
     aggregated = []
     for dc in dcs:
         if check_connection(dc):
-            aggregated.append(agg_data(dc, get_data(dc), get_stashes(dc), get_clients(dc), filters))
+            aggregated.append(agg_data(dc, get_data(dc, timeout), get_stashes(
+                dc, timeout), get_clients(dc, timeout), filters))
 
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs), appcfg=appcfg)
+    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/show/<string:d>', methods=['GET'])
@@ -63,16 +132,17 @@ def showgrid(d, filters=None):
             if dc['name'] == d:
                 if check_connection(dc):
                     if filters:
-                        clients = get_clients(dc)
+                        clients = get_clients(dc, timeout)
                     else:
                         clients = None
 
-                    data_detail = agg_host_data(get_data(dc), get_stashes(dc), clients, filters)
+                    data_detail = agg_host_data(get_data(dc, timeout),
+                                                get_stashes(dc, timeout), clients, filters)
                     if data_detail:
                         break
     else:
         abort(404)
-    return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs), appcfg=appcfg)
+    return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/events/<string:d>')
@@ -87,15 +157,16 @@ def events(d, filters=''):
             if dc['name'] == d:
                 dc_found = True
                 if check_connection(dc):
-                    results += get_events(dc, filters.split(','))
+                    results += get_events(dc, timeout, filters.split(','))
                 break
 
     if dc_found is False:
         abort(404)
 
-    results = sorted(results, lambda x, y: cmp(x['check']['status'], y['check']['status']), reverse=True)
+    results = sorted(results, lambda x, y: _cmp(
+        x['check']['status'], y['check']['status']), reverse=True)
 
-    return render_template('events.html', dc=dc, data=results, filter_data=get_filter_data(dcs), appcfg=appcfg)
+    return render_template('events.html', dc=dc, data=results, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/healthcheck', methods=['GET'])
@@ -151,6 +222,7 @@ def icon_for_event(event):
         return 'check-circle'
 
     return 'question-circle'
+
 
 if __name__ == '__main__':
 

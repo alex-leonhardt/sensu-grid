@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -25,4 +26,3 @@ class ProdConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
-
