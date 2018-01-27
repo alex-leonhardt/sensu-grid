@@ -6,9 +6,9 @@ def check_connection(dc):
     url = 'http://{0}:{1}/info'.format(dc['url'], dc['port'])
     try:
         if 'user' and 'password' in dc:
-            r = requests.get(url, auth=(dc['user'], dc['password']))
+            r = requests.get(url, auth=(dc['user'], dc['password']), timeout=30)
         else:
-            r = requests.get(url)
+            r = requests.get(url, timeout=30)
         if r:
             return True
         else:

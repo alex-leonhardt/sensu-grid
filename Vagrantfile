@@ -17,7 +17,7 @@ gpgcheck=0
 enabled=1
 EOF
     sudo yum -y install sensu uchiwa rabbitmq-server redis
-
+    sudo rabbitmq-plugins enable rabbitmq_management
     sudo chkconfig rabbitmq-server on
     sudo chkconfig redis on
     sudo chkconfig sensu-client on
@@ -30,15 +30,20 @@ EOF
     sudo service rabbitmq-server restart
     sudo service redis restart
     sudo service sensu-client stop
-    sudo service sensu-client start
     sudo service sensu-api stop
     sudo service sensu-api start
     sudo service sensu-server stop
     sudo service sensu-server start
     sudo service uchiwa restart
+    sudo service sensu-client start
 
-    sudo yum -y install supervisor python-pip python-devel
-    sudo pip install -r /vagrant/requirements.txt
+    # create sensu-grid user
+    sudo useradd -c "sensu-grid user" -d /opt/sensu-grid -M -s /sbin/nologin -r sensu-grid
+
+    sudo yum -y install supervisor python-pip python-devel python-virtualenv
+    sudo pip install --upgrade pip ||:
+    sudo pip install -r /vagrant/requirements.txt ||:
+    sudo touch /var/log/sensu-grid.log && sudo chown sensu-grid: /var/log/sensu-grid.log
 
     sudo cp /vagrant/start-scripts/supervisord.conf /etc/supervisord.conf
     sudo service supervisord start
@@ -55,6 +60,7 @@ EOF
         vagrant1.vm.network "forwarded_port", guest: 3000, host: 3000
         vagrant1.vm.network "forwarded_port", guest: 4567, host: 4567
         vagrant1.vm.network "forwarded_port", guest: 5000, host: 5000
+        vagrant1.vm.network "forwarded_port", guest: 15672, host: 15672
 
         vagrant1.vm.synced_folder ".", "/vagrant"
         vagrant1.vm.synced_folder ".", "/opt/sensu-grid"

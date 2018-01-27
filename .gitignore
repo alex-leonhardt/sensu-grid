@@ -1,7 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Vagrant template
 .vagrant/
-
+.idea/
+.vscode/
+.noseids
 *.pyc
 
 ### JetBrains template

@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "cpu": {
+      "command": "echo -n 'WARNING cpu > 75%'; exit 1;",
+      "subscribers": [
+        "default"
+      ],
+      "standalone": true,
+      "interval": 60
+    }
+}
+}

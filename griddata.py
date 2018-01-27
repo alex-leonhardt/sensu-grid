@@ -15,7 +15,7 @@ def _filter_data(timeout, dc):
     filter_data = list()
     r = None
     data = None
-    LOGGER.debug("Retrieving filters for datacenter: {}".format(dc['name']))
+    LOGGER.debug("Retrieving filters for datacenter: {0}".format(dc['name']))
     url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     try:
         if 'user' and 'password' in dc:
@@ -24,7 +24,7 @@ def _filter_data(timeout, dc):
             r = requests.get(url, timeout=timeout)
         r.raise_for_status()
     except Exception as ex:
-        LOGGER.error("Got exception while filtering on clients: {}".format(str(ex)))
+        LOGGER.error("Got exception while filtering on clients: {0}".format(str(ex)))
         pass
     finally:
         if r:
@@ -40,24 +40,32 @@ def _filter_data(timeout, dc):
                     filter_data.append(s)
     else:
         LOGGER.error("No response data")
-    LOGGER.debug("Filter Retrieval for datacenter {} complete".format(dc['name']))
+    LOGGER.debug("Filter Retrieval for datacenter {0} complete".format(dc['name']))
     return filter_data
 
 
 def get_filter_data(dcs, timeout):
     aggregated = list()
+    final_aggregated_filter_data = []
     pool = ThreadPool(len(dcs))
     func = partial(_filter_data, timeout)
-    aggregated = pool.map(func, dcs)
-    if aggregated:
+    try:
+        aggregated = pool.map(func, dcs)
         assert type(aggregated) == list
-        return aggregated
+        for filterdata in aggregated:
+            if filterdata not in final_aggregated_filter_data:
+                final_aggregated_filter_data.append(filterdata)
 
-    return []
+    except Exception as e:
+        LOGGER.error("unable to get filter data, ex: {0}".format(e))
+    finally:
+        pool.close()
+
+    return final_aggregated_filter_data[0]
 
 
 def get_data(dc, timeout):
-    LOGGER.debug("Retrieving data for datacenter: {}".format(dc['name']))
+    LOGGER.debug("Retrieving data for datacenter: {0}".format(dc['name']))
     url = 'http://{0}:{1}/results'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -68,7 +76,7 @@ def get_data(dc, timeout):
             r = requests.get(url, timeout=timeout)
         r.raise_for_status()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving data for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving data for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -77,12 +85,12 @@ def get_data(dc, timeout):
         else:
             LOGGER.error("no reponse")
 
-    LOGGER.debug("Data Retrieval for datacenter {} complete".format(dc['name']))
+    LOGGER.debug("Data Retrieval for datacenter {0} complete".format(dc['name']))
     return data
 
 
 def get_clients(dc, timeout):
-    LOGGER.debug("Retrieving clients for datacenter: {}".format(dc['name']))
+    LOGGER.debug("Retrieving clients for datacenter: {0}".format(dc['name']))
     url = 'http://{0}:{1}/clients'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -96,7 +104,7 @@ def get_clients(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving clients for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving clients for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -104,12 +112,12 @@ def get_clients(dc, timeout):
         else:
             LOGGER.error("no reponse")
 
-    LOGGER.debug("Client Retrieval for datacenter {} complete".format(dc['name']))
+    LOGGER.debug("Client Retrieval for datacenter {0} complete".format(dc['name']))
     return data
 
 
 def get_stashes(dc, timeout):
-    LOGGER.debug("Retrieving stashes for datacenter: {}".format(dc['name']))
+    LOGGER.debug("Retrieving stashes for datacenter: {0}".format(dc['name']))
     url = 'http://{0}:{1}/silenced'.format(dc['url'], dc['port'])
     data = None
     r = None
@@ -122,7 +130,7 @@ def get_stashes(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving stashes for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving stashes for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -130,7 +138,7 @@ def get_stashes(dc, timeout):
         else:
             LOGGER.error("no reponse")
 
-    LOGGER.debug("Stash Retrieval for datacenter {} complete".format(dc['name']))
+    LOGGER.debug("Stash Retrieval for datacenter {0} complete".format(dc['name']))
     return data
 
 
@@ -144,7 +152,15 @@ def filter_object(obj, search):
             if filter_object(value, search):
                 return True
     else:
-        return six.u(search) in six.u(obj)
+        LOGGER.debug("search type {0} // obj type {1}".format(type(search), type(obj)))
+        try:
+            return six.u(search) in six.b(obj)
+        except TypeError as e:
+            LOGGER.warn("filter_object exception (PY2 vs PY3 unicode/str): {0}".format(e))
+            try:
+                return unicode(search) in unicode(obj)
+            except Exception as e:
+                LOGGER.error("filter_object exception: {0}".format(e))
 
     return False
 
@@ -160,7 +176,7 @@ def filter_events(filters):
 
 
 def get_events(dc, timeout, filters=[]):
-    LOGGER.debug("Retrieving events for datacenter: {}".format(dc['name']))
+    LOGGER.debug("Retrieving events for datacenter: {0}".format(dc['name']))
     url = 'http://{0}:{1}/events'.format(dc['url'], dc['port'])
 
     data = []
@@ -175,13 +191,13 @@ def get_events(dc, timeout, filters=[]):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving events for dc: {} ex: {}".format(dc, str(ex)))
+        LOGGER.error("Got exception while retrieving events for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
             r.close()
 
-    LOGGER.debug("Events Retrieval for datacenter {} complete".format(dc['name']))
+    LOGGER.debug("Events Retrieval for datacenter {0} complete".format(dc['name']))
     if len(filters) > 0:
         return filter(filter_events(filters), data)
     else:

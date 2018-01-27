@@ -103,7 +103,12 @@ def get_agg_data(dc):
 def root():
     aggregated = list()
     pool = ThreadPool(len(dcs))
-    aggregated = pool.map(get_agg_data, dcs)
+    try:
+        aggregated = pool.map(get_agg_data, dcs)
+    except Exception as e:
+        print("Exception: ", e)
+    finally:
+        pool.close()
     return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
@@ -127,7 +132,7 @@ def showgrid(d, filters=None):
             if dc['name'] == d:
                 if check_connection(dc):
                     if filters:
-                        clients = get_clients(dc)
+                        clients = get_clients(dc, timeout)
                     else:
                         clients = None
 
