@@ -31,7 +31,7 @@ import logging
 import logging.config
 
 from diskcache import Cache
-cache = Cache('/tmp/sensugrid')
+cache = Cache('/var/tmp/sensugrid')
 
 
 app = Flask(__name__)
@@ -137,7 +137,8 @@ def root():
     futures = list()
     filters = list()
     agg_data_executor = concurrent.futures.ThreadPoolExecutor(len(dcs))
-    [futures.append(agg_data_executor.submit(get_agg_data, dc)) for dc in dcs]
+    for dc in dcs:
+        futures.append(agg_data_executor.submit(get_agg_data, dc))
     for future_result in as_completed(futures):
         agg_data, filtered_data = future_result.result()
         aggregated.append(agg_data)
@@ -153,7 +154,8 @@ def filtered(filters):
             aggregated.append(agg_data(dc, get_data(dc, timeout), get_stashes(
                 dc, timeout), get_clients(dc, timeout), filters))
 
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
+    return render_template(
+        'data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/show/<string:d>', methods=['GET'])
@@ -175,7 +177,8 @@ def showgrid(d, filters=None):
                         break
     else:
         abort(404)
-    return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
+    return render_template(
+        'detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/events/<string:d>')
