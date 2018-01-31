@@ -128,6 +128,7 @@ app:
   # This is a python requests layer timeout, as by default, it does not timeout
   requests_timeout: 10
   logging_level: info
+  cache_expire_time: 60
 ```
 
 ## run locally / manually
