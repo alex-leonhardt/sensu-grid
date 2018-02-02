@@ -11,7 +11,7 @@ from gridcheck import check_stash
 LOGGER = logging.getLogger(__name__)
 
 
-def _filter_data(timeout, dc):
+def filter_data(timeout, dc):
     filter_data = list()
     r = None
     data = None
@@ -48,7 +48,7 @@ def get_filter_data(dcs, timeout):
     aggregated = list()
     final_aggregated_filter_data = []
     pool = ThreadPool(len(dcs))
-    func = partial(_filter_data, timeout)
+    func = partial(filter_data, timeout)
     try:
         aggregated = pool.map(func, dcs)
         assert type(aggregated) == list
@@ -104,7 +104,8 @@ def get_clients(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving clients for dc: {0} ex: {1}".format(dc, str(ex)))
+        LOGGER.error(
+            "Got exception while retrieving clients for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -130,7 +131,8 @@ def get_stashes(dc, timeout):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving stashes for dc: {0} ex: {1}".format(dc, str(ex)))
+        LOGGER.error(
+            "Got exception while retrieving stashes for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -191,7 +193,8 @@ def get_events(dc, timeout, filters=[]):
             r = requests.get(url, timeout=timeout)
             data = r.json()
     except Exception as ex:
-        LOGGER.error("Got exception while retrieving events for dc: {0} ex: {1}".format(dc, str(ex)))
+        LOGGER.error(
+            "Got exception while retrieving events for dc: {0} ex: {1}".format(dc, str(ex)))
         pass
     finally:
         if r:
@@ -255,7 +258,6 @@ def agg_data(dc, data, stashes, client_data=None, filters=None):
                             ack += 1
 
             elif filters is None:
-
                 if i['check']['status'] == 0 and not i['check']['name'] == "keepalive":
                     ok += 1
 

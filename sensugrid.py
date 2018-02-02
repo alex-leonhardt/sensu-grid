@@ -4,6 +4,10 @@ from __future__ import nested_scopes
 from __future__ import division
 from __future__ import generators
 
+import concurrent.futures
+
+from concurrent.futures import as_completed
+
 from flask import Flask
 from flask import render_template
 from flask import abort
@@ -17,16 +21,17 @@ from griddata import (
     get_stashes,
     get_filter_data,
     get_clients,
-    get_events
+    get_events,
+    filter_data,
 )
 from gridconfig import DevConfig
-
-from multiprocessing.dummy import Pool as ThreadPool
-# https://stackoverflow.com/questions/2846653/how-to-use-threading-in-python
 
 import json
 import logging
 import logging.config
+
+from diskcache import Cache
+cache = Cache('/var/tmp/sensugrid')
 
 
 app = Flask(__name__)
@@ -37,6 +42,7 @@ app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
 timeout = appcfg.get('requests_timeout', 10)
+cache_expire_time = appcfg.get('cache_expire_time', 10)
 log_level = appcfg.get('logging_level', 'INFO').upper()
 logging.config.dictConfig({
     "version": 1,
@@ -95,21 +101,52 @@ def _cmp(x, y):
 
 
 def get_agg_data(dc):
-    r = agg_data(dc, get_data(dc, timeout), get_stashes(dc, timeout))
-    return r
+    try:
+        r = agg_data(dc, cache["{0}_data".format(dc)], cache["{0}_stashes".format(dc)])
+        return r, cache["{0}_filters".format(dc)]
+    except KeyError:
+        data = list()
+        stashes = list()
+        data_futures = list()
+        stashes_futures = list()
+        filters_futures = list()
+        data_executor = concurrent.futures.ThreadPoolExecutor(1)
+        data_futures.append(data_executor.submit(get_data, dc, timeout))
+        stashes_executor = concurrent.futures.ThreadPoolExecutor(1)
+        stashes_futures.append(stashes_executor.submit(get_stashes, dc, timeout))
+        filters_executor = concurrent.futures.ThreadPoolExecutor(1)
+        filters_futures.append(filters_executor.submit(filter_data, timeout, dc))
+        for future_result in as_completed(data_futures):
+            data = future_result.result()
+        for future_result in as_completed(stashes_futures):
+            stashes = future_result.result()
+        for future_result in as_completed(filters_futures):
+            filters = future_result.result()
+
+        cache.set("{0}_data".format(dc), data, expire=cache_expire_time)
+        cache.set("{0}_stashes".format(dc), stashes, expire=cache_expire_time)
+        cache.set("{0}_filters".format(dc), filters, expire=cache_expire_time)
+
+        r = agg_data(dc, data, stashes)
+        return r, filters
 
 
 @app.route('/', methods=['GET'])
 def root():
     aggregated = list()
-    pool = ThreadPool(len(dcs))
-    try:
-        aggregated = pool.map(get_agg_data, dcs)
-    except Exception as e:
-        print("Exception: ", e)
-    finally:
-        pool.close()
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
+    futures = list()
+    filters = list()
+    agg_data_executor = concurrent.futures.ThreadPoolExecutor(len(dcs))
+    for dc in dcs:
+        futures.append(agg_data_executor.submit(get_agg_data, dc))
+    for future_result in as_completed(futures):
+        agg_data, filtered_data = future_result.result()
+        aggregated.append(agg_data)
+        for _filter in filtered_data:
+            if _filter not in filters:
+                filters.append(_filter)
+
+    return render_template('data.html', dcs=dcs, data=sorted(aggregated, key=lambda dc: dc["name"]), filter_data=filters, appcfg=appcfg)
 
 
 @app.route('/filtered/<string:filters>', methods=['GET'])
@@ -120,7 +157,8 @@ def filtered(filters):
             aggregated.append(agg_data(dc, get_data(dc, timeout), get_stashes(
                 dc, timeout), get_clients(dc, timeout), filters))
 
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
+    return render_template(
+        'data.html', dcs=dcs, data=aggregated, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/show/<string:d>', methods=['GET'])
@@ -142,7 +180,8 @@ def showgrid(d, filters=None):
                         break
     else:
         abort(404)
-    return render_template('detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
+    return render_template(
+        'detail.html', dc=dc, data=data_detail, filter_data=get_filter_data(dcs, timeout), appcfg=appcfg)
 
 
 @app.route('/events/<string:d>')
