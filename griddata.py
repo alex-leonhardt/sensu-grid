@@ -48,7 +48,7 @@ def get_filter_data(dcs, timeout):
     aggregated = list()
     final_aggregated_filter_data = []
     pool = ThreadPool(len(dcs))
-    func = partial(_filter_data, timeout)
+    func = partial(filter_data, timeout)
     try:
         aggregated = pool.map(func, dcs)
         assert type(aggregated) == list

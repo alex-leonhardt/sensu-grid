@@ -142,8 +142,11 @@ def root():
     for future_result in as_completed(futures):
         agg_data, filtered_data = future_result.result()
         aggregated.append(agg_data)
-        filters.append(filtered_data)
-    return render_template('data.html', dcs=dcs, data=aggregated, filter_data=filters, appcfg=appcfg)
+        for _filter in filtered_data:
+            if _filter not in filters:
+                filters.append(_filter)
+
+    return render_template('data.html', dcs=dcs, data=sorted(aggregated, key=lambda dc: dc["name"]), filter_data=filters, appcfg=appcfg)
 
 
 @app.route('/filtered/<string:filters>', methods=['GET'])
