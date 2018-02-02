@@ -42,7 +42,7 @@ app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
 timeout = appcfg.get('requests_timeout', 10)
-cache_expire_time = appcfg.get('cache_expire_time', 120)
+cache_expire_time = appcfg.get('cache_expire_time', 10)
 log_level = appcfg.get('logging_level', 'INFO').upper()
 logging.config.dictConfig({
     "version": 1,
