@@ -45,8 +45,9 @@ EOF
     sudo pip install -r /vagrant/requirements.txt ||:
     sudo touch /var/log/sensu-grid.log && sudo chown sensu-grid: /var/log/sensu-grid.log
 
-    sudo cp /vagrant/start-scripts/supervisord.conf /etc/supervisord.conf
-    sudo service supervisord start
+    sudo cp /vagrant/start-scripts/sensu-grid.service.unit /etc/systemd/system/sensu-grid.service
+    sudo systemctl daemon-reload
+    sudo systemctl start sensu-grid
 
     SHELL
 

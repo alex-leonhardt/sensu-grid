@@ -1,0 +1,17 @@
+[Unit]
+Description=Sensu Grid Service
+Requires=multi-user.target
+
+[Service]
+User=sensu-grid
+Restart=on-failure
+PermissionsStartOnly=true
+ExecStartPre=-/bin/touch /var/log/sensu-grid.log
+ExecStartPre=-/bin/touch /var/log/sensu-grid.http.log
+ExecStartPre=-/bin/chown sensu-grid:sensu-grid /var/log/sensu-grid.log
+ExecStartPre=-/bin/chown sensu-grid:sensu-grid /var/log/sensu-grid.http.log
+ExecStart=/usr/bin/python /opt/sensu-grid/sensugrid.py
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

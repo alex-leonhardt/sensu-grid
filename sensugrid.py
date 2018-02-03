@@ -4,6 +4,7 @@ from __future__ import nested_scopes
 from __future__ import division
 from __future__ import generators
 
+import os
 import concurrent.futures
 
 from concurrent.futures import as_completed
@@ -24,7 +25,7 @@ from griddata import (
     get_events,
     filter_data,
 )
-from gridconfig import DevConfig
+from gridconfig import ProdConfig
 
 import json
 import logging
@@ -37,7 +38,7 @@ cache = Cache('/var/tmp/sensugrid')
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
 
-myconfig = DevConfig
+myconfig = ProdConfig
 app.config.from_object(myconfig)
 dcs = app.config['DCS']
 appcfg = app.config['APPCFG']
@@ -58,38 +59,55 @@ logging.config.dictConfig({
             "level": log_level,
             "formatter": "simple",
             "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.handlers.WatchedFileHandler",
+            "level": log_level,
+            "formatter": "simple",
+            "filename": "/var/log/sensu-grid.log"
+        },
+        "httplog": {
+            "class": "logging.handlers.WatchedFileHandler",
+            "level": log_level,
+            "formatter": "simple",
+            "filename": "/var/log/sensu-grid.http.log"
         }
     },
     "loggers": {
         "requests": {
             "level": "WARNING",
-            "handlers": ["console"],
+            "handlers": ["file"],
             "propagate": False
         },
         "sensugrid": {
             "level": log_level,
-            "handlers": ["console"],
+            "handlers": ["file"],
             "propagate": False
         },
         "gridcheck": {
             "level": log_level,
-            "handlers": ["console"],
+            "handlers": ["file"],
             "propagate": False
         },
         "gridconfig": {
             "level": log_level,
-            "handlers": ["console"],
+            "handlers": ["file"],
             "propagate": False
         },
         "griddata": {
             "level": log_level,
-            "handlers": ["console"],
+            "handlers": ["file"],
             "propagate": False
         },
+        "werkzeug": {
+            "level": log_level,
+            "handlers": ["httplog"],
+            "propagate": False
+        }
     },
-    "": {
+    "root": {
         "level": log_level,
-        "handlers": ["console"]
+        "handlers": ["file", "console"]
     }
 })
 LOGGER = logging.getLogger(__name__)
@@ -266,4 +284,6 @@ def icon_for_event(event):
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0',
-            port=5000)
+            port=5000,
+            threaded=True,
+            extra_files=os.path.dirname(os.path.abspath(__file__)) + '/conf/config.yaml')
