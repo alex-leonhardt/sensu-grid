@@ -1,5 +1,5 @@
 Flask>=0.12.3
-PyYAML==3.12
+PyYaml>=4.2b1
 argparse
 requests>=2.20.0
 gunicorn==19.7.1
