@@ -12,6 +12,7 @@ from concurrent.futures import as_completed
 from flask import Flask
 from flask import render_template
 from flask import abort
+from flask import jsonify
 
 from reverseproxied import ReverseProxied
 from gridcheck import check_connection
@@ -250,7 +251,7 @@ def healthcheck():
             retdata[dc['name']]['error'] = 'True'
         ret.append(retdata)
 
-    return json.dumps(ret)
+    return jsonify(ret)
 
 
 @app.template_filter('color_for_event')
